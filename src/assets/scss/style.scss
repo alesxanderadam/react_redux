@@ -1,0 +1,17 @@
+.title-component {
+    width: 575px;
+    height: 74px;
+    border-radius: 0px;
+    background: linear-gradient(180deg, #F21299 0%, #1B02B5 100%);
+
+    h1 {
+        line-height: 62px;
+        color: #ffff;
+    }
+}
+
+@media screen and (max-width: 630px) {
+    #root {
+        width: 650px;
+    }
+}
