@@ -9,14 +9,15 @@ export interface ProductModel {
     alias: string;
     price: number;
     description: string;
-    size: string;
     shortDescription: string;
     quantity: number;
     deleted: boolean;
     categories: string;
-    relatedProducts: string;
+    relatedProducts: string[];
     feature: boolean;
     image: string;
+    size: any;
+
 }
 
 export interface ProductDetailModel {
@@ -26,7 +27,7 @@ export interface ProductDetailModel {
     price: number;
     feature: boolean;
     description: string;
-    size: string[];
+    size: string;
     shortDescription: string;
     quantity: number;
     image: string;
@@ -49,4 +50,6 @@ export interface RelatedProduct {
     description: string;
     shortDescription: string;
     image: string;
+    relatedProducts: string[];
+    size: any;
 }

@@ -1,0 +1,54 @@
+.title-pd-carousel {
+    h2 {
+        color: pink;
+    }
+
+    p {
+        font-weight: 500;
+    }
+
+
+
+}
+
+.slick-dots {
+    bottom: -70px !important;
+
+    li {
+
+        /* thay đổi màu sắc */
+        button {
+
+            width: 10px !important;
+            /* thay đổi kích thước */
+            height: 10px !important;
+            border-radius: 50% !important;
+            background-color: pink !important;
+        }
+    }
+
+}
+
+
+.background-image-product {
+    background-color: rgb(255, 226, 231);
+    // border-radius: 100px;
+    overflow: hidden;
+    position: relative;
+
+    .btn-buy {
+        width: 140px;
+        position: absolute;
+        background-color: #fff;
+        right: 0;
+        bottom: 40px;
+        border-radius: 0px;
+        font-weight: bold;
+        transition: all 0.4s;
+
+        &:hover {
+            background-color: darkgreen;
+            color: white;
+        }
+    }
+}

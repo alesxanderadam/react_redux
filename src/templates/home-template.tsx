@@ -5,6 +5,7 @@ import { RootState } from '../redux/config-store'
 import { useSelector } from 'react-redux'
 import './template.scss'
 import { ACCESS_TOKEN, settings, USER_LOGIN } from '../util/config'
+import { HeartOutlined, ShoppingCartOutlined } from '@ant-design/icons'
 type Props = {}
 
 const HomeTemplate = (props: Props) => {
@@ -44,10 +45,30 @@ const HomeTemplate = (props: Props) => {
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
-            <div style={{ minHeight: '90vh' }}>
-                <Outlet />
+            <div className='content' style={{ maxWidth: "90%", margin: "auto" }}>
+                <div className='sub-header py-3'>
+                    <div className='d-flex justify-content-around align-items-center'>
+                        <img src="./images/log_quanghuy.jpg" width={40} height={40} alt="" style={{ verticalAlign: "center" }} />
+                        <div className='menu-strip d-flex justify-content-center'>
+                            <ul className='item-menu d-flex m-0' style={{ textDecoration: "none", listStyle: "none" }}>
+                                <li className='px-2'>Home</li>
+                                <li className='px-2'>About</li>
+                                <li className='px-2'>Categories</li>
+                                <li className='px-2'>Contact</li>
+                            </ul>
+                        </div>
+                        <div className='like-and-cart d-flex justify-content-around'>
+                            <HeartOutlined className='me-2' />
+                            <ShoppingCartOutlined />
+                        </div>
+                    </div>
+                </div>
+                <div style={{ minHeight: '90vh' }}>
+                    <Outlet />
+                </div>
             </div>
-            <footer className='bg-light text-dark text-center p-3 mt-5'>
+
+            <footer className='bg-dark text-light text-center p-3 mt-5'>
                 <div className='row'>
                     <div className="col-lg-4 col-xl-3 offset-xl-1 col-md-4 col-sm-12 col-12">
                         <div className="footer-link">
