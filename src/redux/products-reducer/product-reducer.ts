@@ -1,10 +1,13 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { http } from '../../util/config';
+import { http, PRODUCT_CARD, settings, TOTAL_QUATITY } from '../../util/config';
 import { ProductDetailModel, ProductModel, ProductState } from '../../models/product.model';
 import { DispatchType } from '../config-store';
 const initialState: ProductState = {
     arrProduct: null,
-    productDetail: null
+    productCard: settings.getStorageJson(PRODUCT_CARD) ? settings.getStorageJson(PRODUCT_CARD) : [],
+    quantity: settings.getStore(TOTAL_QUATITY) ? settings.getStore(TOTAL_QUATITY) : 0,
+    totalAmount: 0,
+    productDetail: null,
 }
 
 const productReducer = createSlice({
@@ -29,6 +32,27 @@ const productReducer = createSlice({
         builder.addCase(getProductDetailApi.rejected, (state, action) => {
             // turn off loading
         });
+        builder.addCase(addProductToCardAction.fulfilled, (state: ProductState, action: PayloadAction<ProductDetailModel>) => {
+            const isExisted = state.productCard?.find((item: ProductDetailModel) => item.id === action.payload.id);
+            state.quantity++;
+            settings.setStorage(TOTAL_QUATITY, String(state.quantity))
+            if (!isExisted) {
+                state.productCard?.push({
+                    ...action.payload,
+                    quantity: 1,
+                })
+                settings.setStorageJson(PRODUCT_CARD, [...state.productCard])
+            }
+            else {
+                isExisted.quantity++;
+                isExisted.price += isExisted.price
+                settings.setStorageJson(PRODUCT_CARD, [...state.productCard])
+            }
+            state.totalAmount = state.productCard?.reduce(
+                (total: number, item: ProductDetailModel) => total + Number(item.price) * Number(item.quantity),
+                0
+            )
+        });
     }
 });
 export const { setArrProductAction } = productReducer.actions
@@ -43,16 +67,26 @@ export const getProductApi = () => {
             dispatch(action)
         } catch (err) {
             console.log(err);
+            return;
         }
     }
 }
 /* ------------------ create asyn thunk ----------------------------------*/
-export const getProductDetailApi = createAsyncThunk('productReducer/getProductDetailApi', async (productId: number) => {
+export const getProductDetailApi = createAsyncThunk('productReducer/getProductDetailApi', async (productId: number): Promise<ProductDetailModel> => {
     try {
         const result = await http.get(`/api/Product/getbyid?id=${productId}`)
         return result.data.content;
     }
     catch (err) {
         console.log(err)
+    }
+})
+
+export const addProductToCardAction = createAsyncThunk('productReducer/addProductToCardAction', (product: any) => {
+    try {
+        return product
+    } catch (error) {
+        console.log(error)
+        return;
     }
 })

@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { PageConstant } from './common/page.constant';
 import Detail from './pages/detail/detail';
 import Login from './pages/login/login';
+import Register from './pages/register/register';
 export const history: any = createBrowserHistory()
 
 
@@ -19,6 +20,7 @@ export default function App() {
                     <Route index path={`${PageConstant.home}`} element={<ResponsiveItem component={Home} componentMobile={Home} />}></Route>
                     <Route path={`${PageConstant.detail}/:id`} element={<Detail />}></Route>
                     <Route path={`${PageConstant.login}`} element={<Login />}></Route>
+                    <Route path={`${PageConstant.register}`} element={<Register />}></Route>
                 </Route>
             </Routes>
         </HistoryBrowser>

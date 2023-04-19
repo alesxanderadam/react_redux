@@ -1,12 +1,15 @@
 .title-component {
-    width: 575px;
-    height: 74px;
-    border-radius: 0px;
-    background: linear-gradient(180deg, #F21299 0%, #1B02B5 100%);
+    margin-top: 130px;
 
     h1 {
-        line-height: 62px;
-        color: #ffff;
+        color: pink;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    p {
+        font-size: 18px;
+        font-weight: 500;
     }
 }
 

@@ -70,6 +70,16 @@ body {
     }
 }
 
+.like-and-cart {
+    position: relative;
+
+    .total_quatity {
+        position: absolute;
+        top: 0px;
+        right: -8px;
+    }
+}
+
 footer {
     .footer-link {
         h4 {
@@ -121,4 +131,8 @@ footer {
         }
 
     }
+}
+
+.about_shopping_card {
+    width: 550px;
 }

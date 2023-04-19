@@ -48,12 +48,14 @@ const Home = (props?: Props) => {
                 })}
             </Carousel>
 
-            {/* <div className="title-component my-5">
-                <h1>Profile</h1>
-            </div> */}
+            <div className="title-component">
+                <h1 className='text-center'>Cushion for your miles</h1>
+                <p className='text-center'>A light has Nike ZoomX midosle is combine with increased stack heights to <br /> help provide cushion during extendends stretches of running</p>
+            </div>
+
             <div className='row bg-body-product'>
                 {arrProduct?.map((item: ProductModel, index) => {
-                    return <div className="col-xl-4 col-sm-6 p-0" key={index}>
+                    return <div className="col-xl-4 col-sm-6 p-0 " key={index}>
                         <ProductCard product={item} />
                     </div>
 

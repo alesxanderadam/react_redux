@@ -1,6 +1,9 @@
 export type ProductState = {
-    arrProduct: ProductModel[]
-    productDetail: ProductDetailModel | null
+    arrProduct: ProductModel[],
+    productCard: ProductDetailModel[] | null,
+    quantity: number,
+    totalAmount: number,
+    productDetail: ProductDetailModel | null,
 }
 
 export interface ProductModel {
@@ -16,8 +19,7 @@ export interface ProductModel {
     relatedProducts: string[];
     feature: boolean;
     image: string;
-    size: any;
-
+    size: number[];
 }
 
 export interface ProductDetailModel {
@@ -34,7 +36,6 @@ export interface ProductDetailModel {
     categories: Category[];
     relatedProducts: RelatedProduct[];
 }
-
 
 export interface Category {
     id: string;

@@ -1,21 +1,44 @@
 import axios from "axios"
 import { history } from "../app"
-const TOKEN_CYBER = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5Mb3AiOiJGcm9udGVuZCA3MyIsIkhldEhhblN0cmluZyI6IjE5LzA1LzIwMjMiLCJIZXRIYW5UaW1lIjoiMTY4NDQ1NDQwMDAwMCIsIm5iZiI6MTY1OTg5MTYwMCwiZXhwIjoxNjg0NjAyMDAwfQ.49m9-EoDr6zr7UOk_79hfcvJWKI_s0Wy_g40ossfl9c'
+import { message } from "antd"
+const TokenCybersoft = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5Mb3AiOiJGcm9udGVuZCA3MyIsIkhldEhhblN0cmluZyI6IjMwLzA1LzIwMjMiLCJIZXRIYW5UaW1lIjoiMTY4NTQwNDgwMDAwMCIsIm5iZiI6MTY1OTg5MTYwMCwiZXhwIjoxNjg1NTUyNDAwfQ.-poI4CYh8bBsN-xbPHgcbNrVnKw1fA1r4IuZCUk0rmA'
 
 export const DOMAIN: string = 'https://shop.cyberlearn.vn'
 export const ACCESS_TOKEN: string = "accessToken"
 export const USER_LOGIN: string = "userLogin"
 export const USER_PROFILE: string = "userProfile"
+export const TOTAL_QUATITY: string = "totalQuatity"
+export const PRODUCT_CARD: string = "productCard"
+
 export const http = axios.create({
     baseURL: DOMAIN,
-    timeout: 30000,
+    timeout: 100000,
 });
+
+http.interceptors.request.use((config) => {
+    config.headers = {
+        ...config.headers,
+        Authorization: ` Bearer ${settings.getStore(ACCESS_TOKEN)} `,
+        TokenCybersoft
+    }
+    return config;
+}, (err) => {
+    return Promise.reject(err)
+})
+
 http.interceptors.response.use((response) => {
     return response
 }, (error) => {
     try {
-        if (error.response?.status === 400 || error.response?.status === 404)
-            history.push('/')
+        if (error.response?.status === 400 || error.response?.status === 404) {
+            if (error.response?.status === 400) {
+                return message.warning(error.response.data.message)
+            }
+            if (error.response?.status === 404) {
+                return message.error(error.response.data.message)
+            }
+        }
+        console.log(error.response)
         return Promise.reject(error)
     } catch (err) {
         console.log(err)

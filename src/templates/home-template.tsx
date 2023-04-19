@@ -3,23 +3,71 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { PageConstant } from '../common/page.constant'
 import { RootState } from '../redux/config-store'
 import { useSelector } from 'react-redux'
-import './template.scss'
-import { ACCESS_TOKEN, settings, USER_LOGIN } from '../util/config'
+import { ACCESS_TOKEN, PRODUCT_CARD, settings, TOTAL_QUATITY, USER_LOGIN } from '../util/config'
 import { HeartOutlined, ShoppingCartOutlined } from '@ant-design/icons'
+import { Popover, Table } from 'antd'
+import './template.scss'
+
 type Props = {}
 
 const HomeTemplate = (props: Props) => {
-    const { userLogin } = useSelector((state: RootState) => state.userReducer);
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const { userLogin } = useSelector((state: RootState) => state.userReducer)
+    const { quantity } = useSelector((state: RootState) => state.productReducer)
+    const total = settings.getStorageJson(PRODUCT_CARD)?.reduce((acc: any, record) => acc + record.price * record.quantity, 0);
     const renderLoginButton = () => {
         if (userLogin) {
             return <>
-                <NavLink to={`${PageConstant.profile}`} style={{ textDecoration: 'none' }}> <h5 className='login mx-2'> He sờ lô ! {userLogin.email}</h5></NavLink>
+                <NavLink to={`${PageConstant.profile}`}
+                    style={{ textDecoration: 'none' }}> <h5 className='login mx-2'> He sờ lô ! {userLogin.email}</h5></NavLink>
                 <span className='text-danger' style={{ cursor: 'pointer', paddingRight: '15px' }} onClick={() => { settings.clearStorage(ACCESS_TOKEN); settings.clearStorage(USER_LOGIN); navigate(`${PageConstant.login}`); window.location.reload(); }}>Logout</span>
             </>
         }
         return <NavLink to={`${PageConstant.login}`} style={{ textDecoration: 'none' }}><h5 className='login mx-2'>Login</h5></NavLink>;
     }
+
+    const columns = [
+        {
+            title: "ID",
+            dataIndex: "id",
+            key: "id"
+        },
+        {
+            title: "Name",
+            dataIndex: "name",
+            key: "name"
+        },
+        {
+            title: "Price",
+            dataIndex: "price",
+            key: "price"
+        },
+        {
+            title: "Quantity",
+            dataIndex: "quantity",
+            key: "quantity"
+        },
+        {
+            title: "Images",
+            dataIndex: "image",
+            key: "image",
+            render: (image: string) => (
+                <>
+                    <img src={image} alt="product" key={image} style={{ width: 50, height: 50, marginRight: 5 }} />
+                </>
+            )
+        },
+        {
+            title: "Total",
+            dataIndex: "total",
+            key: "total",
+            render: (_, record) => {
+                const total = record.price * record.quantity;
+                return <span>{total}</span>;
+            },
+        }
+    ];
+
     return (
         <>
             <Navbar className='header' expand="lg">
@@ -32,14 +80,6 @@ const HomeTemplate = (props: Props) => {
                     <Navbar.Toggle aria-controls="navbarScroll" />
                     <Navbar.Collapse id="navbarScroll">
                         <Nav className="me-auto my-2 my-lg-0" style={{ maxHeight: '100px' }} navbarScroll> </Nav>
-                        <div className="d-flex align-items-center text-white" style={{ position: 'relative' }}>
-                            <i className="fa-solid fa-magnifying-glass"></i>
-                            <h3 className='search ms-2'>Search</h3>
-                        </div>
-                        <div className='d-flex align-items-center text-white mx-2'>
-                            <h2 className='icon-shopping'>🛒</h2>
-                            <h3 className='amount'>(1)</h3>
-                        </div>
                         {renderLoginButton()}
                         <NavLink style={{ textDecoration: 'none' }} to={`${PageConstant.register}`}><h5 className='login mx-2'>Register</h5></NavLink>
                     </Navbar.Collapse>
@@ -57,16 +97,26 @@ const HomeTemplate = (props: Props) => {
                                 <li className='px-2'>Contact</li>
                             </ul>
                         </div>
-                        <div className='like-and-cart d-flex justify-content-around'>
+                        <div className='like-and-cart d-flex justify-content-around align-items-center'>
                             <HeartOutlined className='me-2' />
-                            <ShoppingCartOutlined />
+                            <Popover
+                                content={
+                                    <div className='about_shopping_card'>
+                                        <Table columns={columns} dataSource={settings.getStorageJson(PRODUCT_CARD)} />
+                                        <p>Total: {total}</p>
+                                    </div>
+                                }
+                                title={<p className='text-center' style={{ color: 'pink', fontWeight: 'bold' }}>MY SHOES</p>}>
+                                <ShoppingCartOutlined />
+                            </Popover>
+                            <sub className='total_quatity' style={{ color: '#ff002c' }}>{settings.getStore(TOTAL_QUATITY)}</sub>
                         </div>
                     </div>
                 </div>
                 <div style={{ minHeight: '90vh' }}>
                     <Outlet />
                 </div>
-            </div>
+            </div >
 
             <footer className='bg-dark text-light text-center p-3 mt-5'>
                 <div className='row'>
