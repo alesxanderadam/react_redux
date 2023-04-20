@@ -1,30 +1,87 @@
 import { Container, Nav, Navbar } from 'react-bootstrap'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { PageConstant } from '../common/page.constant'
-import { RootState } from '../redux/config-store'
-import { useSelector } from 'react-redux'
-import { ACCESS_TOKEN, PRODUCT_CARD, settings, TOTAL_QUATITY, USER_LOGIN } from '../util/config'
-import { HeartOutlined, ShoppingCartOutlined } from '@ant-design/icons'
-import { Popover, Table } from 'antd'
+import { DispatchType, RootState } from '../redux/config-store'
+import { useDispatch, useSelector } from 'react-redux'
+import { ACCESS_TOKEN, PRODUCT_CARD, settings, USER_LOGIN } from '../util/config'
+import { HeartOutlined, SearchOutlined, ShoppingCartOutlined } from '@ant-design/icons'
+import { Button, Input, Popover, Table } from 'antd'
+import { useEffect, useRef, useState } from 'react'
 import './template.scss'
+import { TOTAL_QUATITY } from '../util/config'
+import { ProductDetailModel } from '../models/product.model'
+import { decreaseProductCard, increaseProductCard } from '../redux/products-reducer/product-reducer'
+import { Loader } from '../components/loader/loader'
 
 type Props = {}
 
 const HomeTemplate = (props: Props) => {
     const navigate = useNavigate();
+    const dispatch: DispatchType = useDispatch();
     const { userLogin } = useSelector((state: RootState) => state.userReducer)
-    const { quantity } = useSelector((state: RootState) => state.productReducer)
+    const { quantity, productCard } = useSelector((state: RootState) => state.productReducer)
+    const [showInput, setShowInput] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
+    const inputRef = useRef(null);
     const total = settings.getStorageJson(PRODUCT_CARD)?.reduce((acc: any, record) => acc + record.price * record.quantity, 0);
     const renderLoginButton = () => {
         if (userLogin) {
             return <>
                 <NavLink to={`${PageConstant.profile}`}
                     style={{ textDecoration: 'none' }}> <h5 className='login mx-2'> He sờ lô ! {userLogin.email}</h5></NavLink>
-                <span className='text-danger' style={{ cursor: 'pointer', paddingRight: '15px' }} onClick={() => { settings.clearStorage(ACCESS_TOKEN); settings.clearStorage(USER_LOGIN); navigate(`${PageConstant.login}`); window.location.reload(); }}>Logout</span>
+                <span className='text-danger' style={{ cursor: 'pointer', paddingRight: '15px' }} onClick={() => {
+                    settings.clearStorage(ACCESS_TOKEN);
+                    settings.clearStorage(USER_LOGIN);
+                    settings.clearStorage(PRODUCT_CARD);
+                    settings.clearStorage(TOTAL_QUATITY);
+                    navigate(`${PageConstant.login}`);
+                    window.location.reload();
+                }}>Logout</span>
             </>
         }
         return <NavLink to={`${PageConstant.login}`} style={{ textDecoration: 'none' }}><h5 className='login mx-2'>Login</h5></NavLink>;
     }
+    const handleClick = () => {
+        setShowInput(true);
+    }
+    const handleOutsideClick = (event) => {
+        if (inputRef.current && !inputRef.current.contains(event.target)) {
+            setShowInput(false);
+        }
+    }
+
+    const handleQuatity = (decrement: boolean, id: number) => {
+        if (decrement === false) {
+            const productIndex = productCard.findIndex((product: ProductDetailModel) => product.id === id);
+            if (productIndex !== -1) {
+                dispatch(decreaseProductCard(id));
+            }
+        }
+        if (decrement === true) {
+            const productIndex = productCard.findIndex((product: ProductDetailModel) => product.id === id);
+            if (productIndex !== -1) {
+                dispatch(increaseProductCard(id));
+            }
+        }
+    }
+
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+            if (currentScrollY > 55 && !isScrolled) {
+                setIsScrolled(true);
+            } else if (currentScrollY === 54 || currentScrollY <= 50 && isScrolled) {
+                setIsScrolled(false);
+            }
+        };
+        window.addEventListener('scroll', handleScroll);
+        document.addEventListener('mousedown', handleOutsideClick);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            document.removeEventListener('mousedown', handleOutsideClick);
+        };
+    }, [isScrolled]);
 
     const columns = [
         {
@@ -44,8 +101,18 @@ const HomeTemplate = (props: Props) => {
         },
         {
             title: "Quantity",
-            dataIndex: "quantity",
-            key: "quantity"
+            key: "quantity",
+            render: (data: ProductDetailModel) => (
+                <>
+                    <Button className='btn_quatity' onClick={() => {
+                        handleQuatity(false, data.id)
+                    }}>-</Button>
+                    <span className='me-1 ms-1'>{data.quantity}</span>
+                    <Button className='btn_quatity' onClick={() => {
+                        handleQuatity(true, data.id)
+                    }}>+</Button>
+                </>
+            )
         },
         {
             title: "Images",
@@ -86,8 +153,8 @@ const HomeTemplate = (props: Props) => {
                 </Container>
             </Navbar>
             <div className='content' style={{ maxWidth: "90%", margin: "auto" }}>
-                <div className='sub-header py-3'>
-                    <div className='d-flex justify-content-around align-items-center'>
+                <div className="sub-header py-3 ">
+                    <div className={`d-flex justify-content-around align-items-center ${isScrolled && 'scrolled'}`}>
                         <img src="./images/log_quanghuy.jpg" width={40} height={40} alt="" style={{ verticalAlign: "center" }} />
                         <div className='menu-strip d-flex justify-content-center'>
                             <ul className='item-menu d-flex m-0' style={{ textDecoration: "none", listStyle: "none" }}>
@@ -98,21 +165,35 @@ const HomeTemplate = (props: Props) => {
                             </ul>
                         </div>
                         <div className='like-and-cart d-flex justify-content-around align-items-center'>
-                            <HeartOutlined className='me-2' />
+                            <div ref={inputRef}>
+                                {showInput ? (
+                                    <Input.Search
+                                        className='me-3'
+                                        placeholder="Enter shose name?"
+                                        onSearch={value => console.log(value)}
+                                        style={{ width: 150 }}
+                                    />
+                                ) : (
+                                    <SearchOutlined className='me-3' onClick={handleClick} />
+                                )}
+                            </div>
+                            <HeartOutlined className='me-3' />
                             <Popover
                                 content={
                                     <div className='about_shopping_card'>
-                                        <Table columns={columns} dataSource={settings.getStorageJson(PRODUCT_CARD)} />
+                                        <Table columns={columns} dataSource={productCard} />
                                         <p>Total: {total}</p>
                                     </div>
                                 }
                                 title={<p className='text-center' style={{ color: 'pink', fontWeight: 'bold' }}>MY SHOES</p>}>
                                 <ShoppingCartOutlined />
                             </Popover>
-                            <sub className='total_quatity' style={{ color: '#ff002c' }}>{settings.getStore(TOTAL_QUATITY)}</sub>
+                            <sub className='total_quatity' style={{ color: '#ff002c' }}>{quantity}</sub>
+
                         </div>
                     </div>
                 </div>
+
                 <div style={{ minHeight: '90vh' }}>
                     <Outlet />
                 </div>
@@ -177,5 +258,4 @@ const HomeTemplate = (props: Props) => {
         </>
     )
 }
-
 export default HomeTemplate

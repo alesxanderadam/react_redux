@@ -4,6 +4,7 @@ export type ProductState = {
     quantity: number,
     totalAmount: number,
     productDetail: ProductDetailModel | null,
+    loading: boolean;
 }
 
 export interface ProductModel {

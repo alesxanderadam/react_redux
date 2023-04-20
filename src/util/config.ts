@@ -38,7 +38,6 @@ http.interceptors.response.use((response) => {
                 return message.error(error.response.data.message)
             }
         }
-        console.log(error.response)
         return Promise.reject(error)
     } catch (err) {
         console.log(err)

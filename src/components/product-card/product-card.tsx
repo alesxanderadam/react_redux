@@ -1,5 +1,5 @@
 import { HeartOutlined } from '@ant-design/icons'
-import { ProductModel, RelatedProduct } from '../../models/product.model'
+import { ProductDetailModel, ProductModel, RelatedProduct } from '../../models/product.model'
 import './product-card.scss'
 import { Link } from 'react-router-dom';
 import { PageConstant } from '../../common/page.constant';
@@ -10,7 +10,7 @@ import { ACCESS_TOKEN, settings } from '../../util/config';
 import { message } from 'antd';
 
 type Props = {
-    product?: ProductModel | RelatedProduct
+    product?: ProductModel | RelatedProduct | ProductDetailModel
 }
 
 const ProductCard = ({ product }: Props) => {

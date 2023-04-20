@@ -8,6 +8,7 @@ const initialState: ProductState = {
     quantity: settings.getStore(TOTAL_QUATITY) ? settings.getStore(TOTAL_QUATITY) : 0,
     totalAmount: 0,
     productDetail: null,
+    loading: false,
 }
 
 const productReducer = createSlice({
@@ -22,17 +23,24 @@ const productReducer = createSlice({
         //pending: Đang xử lý
         //fulfilled: Đã xử lý thành công
         //rejected: Thất bại
+        //Gêt product
         builder.addCase(getProductDetailApi.pending, (state, action) => {
-            // turn on loading
+            state.loading = true;
         });
         builder.addCase(getProductDetailApi.fulfilled, (state: ProductState, action: PayloadAction<ProductDetailModel>) => {
-            // turn off loading
+            state.loading = false;
             state.productDetail = action.payload;
         });
         builder.addCase(getProductDetailApi.rejected, (state, action) => {
-            // turn off loading
+            state.loading = false;
         });
+
+        //Add card
+        builder.addCase(addProductToCardAction.pending, (state) => {
+            state.loading = true;
+        })
         builder.addCase(addProductToCardAction.fulfilled, (state: ProductState, action: PayloadAction<ProductDetailModel>) => {
+            state.loading = false;
             const isExisted = state.productCard?.find((item: ProductDetailModel) => item.id === action.payload.id);
             state.quantity++;
             settings.setStorage(TOTAL_QUATITY, String(state.quantity))
@@ -52,6 +60,64 @@ const productReducer = createSlice({
                 (total: number, item: ProductDetailModel) => total + Number(item.price) * Number(item.quantity),
                 0
             )
+        });
+        builder.addCase(addProductToCardAction.rejected, (state) => {
+            state.loading = false;
+        })
+        builder.addCase(updateProductCard.fulfilled, (state: ProductState, action: PayloadAction<ProductDetailModel>) => {
+            // Update productCard in the state with the new product data
+            const index = state.productCard.findIndex((product) => product.id === action.payload.id);
+            if (index !== -1) {
+                state.productCard[index] = action.payload;
+            } else {
+                state.productCard.push(action.payload);
+            }
+
+            // Update quantity and total amount in the state
+            state.quantity = state.productCard.reduce((sum, product) => sum + product.quantity, 0);
+            state.totalAmount = state.productCard.reduce((sum, product) => sum + product.quantity * product.price, 0);
+
+            // Update productCard in the local storage
+            settings.setStorageJson(PRODUCT_CARD, state.productCard);
+
+            // Update total quantity in the local storage
+            settings.setStorage(TOTAL_QUATITY, String(state.quantity));
+        });
+        builder.addCase(decreaseProductCard.fulfilled, (state: ProductState, action: PayloadAction<number>) => {
+            // Decrease product quantity in the productCard array
+            const index = state.productCard.findIndex((product) => product.id === action.payload);
+            if (index !== -1) {
+                state.productCard[index].quantity -= 1;
+                if (state.productCard[index].quantity === 0) {
+                    state.productCard.splice(index, 1);
+                }
+            }
+
+            // Update quantity and total amount in the state
+            state.quantity = state.productCard.reduce((sum, product) => sum + product.quantity, 0);
+            state.totalAmount = state.productCard.reduce((sum, product) => sum + product.quantity * product.price, 0);
+
+            // Update productCard in the local storage
+            settings.setStorageJson(PRODUCT_CARD, state.productCard);
+
+            // Update total quantity in the local storage
+            settings.setStorage(TOTAL_QUATITY, String(state.quantity));
+        });
+        builder.addCase(increaseProductCard.fulfilled, (state: ProductState, action: PayloadAction<number>) => {
+            const index = state.productCard.findIndex((product) => product.id === action.payload);
+            if (index !== -1) {
+                state.productCard[index].quantity += 1;
+            }
+
+            // Update quantity and total amount in the state
+            state.quantity = state.productCard.reduce((sum, product) => sum + product.quantity, 0);
+            state.totalAmount = state.productCard.reduce((sum, product) => sum + product.quantity * product.price, 0);
+
+            // Update productCard in the local storage
+            settings.setStorageJson(PRODUCT_CARD, state.productCard);
+
+            // Update total quantity in the local storage
+            settings.setStorage(TOTAL_QUATITY, String(state.quantity));
         });
     }
 });
@@ -88,5 +154,28 @@ export const addProductToCardAction = createAsyncThunk('productReducer/addProduc
     } catch (error) {
         console.log(error)
         return;
+    }
+})
+
+export const updateProductCard = createAsyncThunk('productReducer/updateProductCard', async (product: ProductDetailModel): Promise<ProductDetailModel> => {
+    try {
+        return product;
+    } catch (error) {
+        throw error;
+    }
+})
+
+export const decreaseProductCard = createAsyncThunk('productReducer/decreaseProductCard', async (id: number): Promise<number> => {
+    try {
+        return id;
+    } catch (error) {
+        throw error;
+    }
+})
+export const increaseProductCard = createAsyncThunk('productReducer/increaseProductCard', async (id: number): Promise<number> => {
+    try {
+        return id;
+    } catch (error) {
+        throw error;
     }
 })

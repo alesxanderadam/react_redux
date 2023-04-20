@@ -6,6 +6,7 @@ import { Carousel } from 'antd';
 import './home.scss'
 import { ProductModel } from '../../models/product.model';
 import ProductCard from '../../components/product-card/product-card';
+import ReactPaginate from 'react-paginate';
 type Props = {}
 
 const Home = (props?: Props) => {
@@ -19,6 +20,25 @@ const Home = (props?: Props) => {
         initialSlide: 1,
         pauseOnDotsHover: true,
         autoplay: true
+    };
+
+    const [pageNumber, setPageNumber] = useState(0);
+    // số lượng sản phẩm mỗi trang
+    const productPerPage = 6;
+    // trang đến: 0 * 9 = 0 trang
+    const vistedPage = pageNumber * productPerPage;
+    // hiển thị trang sản phẩm : danh sách sản phẩm từ vị trí (0, 9) nếu là trang 1
+    // hoặc từ (10, 19) nếu là trang 2
+    const displayPage = arrProduct?.slice(
+        vistedPage,
+        vistedPage + productPerPage
+    );
+    // hiển thị số phân trang
+    const pageCount = Math.ceil(arrProduct?.length / productPerPage);
+    // đổi trang hiển thị
+    // selected tương ứng: trang 1: seleted 0, trang 2: selected: 1
+    const changePage = ({ selected }) => {
+        setPageNumber(selected);
     };
 
 
@@ -54,13 +74,24 @@ const Home = (props?: Props) => {
             </div>
 
             <div className='row bg-body-product'>
-                {arrProduct?.map((item: ProductModel, index) => {
+                {displayPage?.map((item: ProductModel, index) => {
                     return <div className="col-xl-4 col-sm-6 p-0 " key={index}>
                         <ProductCard product={item} />
                     </div>
 
                 })}
             </div>
+
+            <div>
+                <ReactPaginate
+                    pageCount={pageCount}
+                    onPageChange={changePage}
+                    previousLabel="Prev"
+                    nextLabel="Next"
+                    containerClassName="paginationBtns"
+                />
+            </div>
+
         </>
     )
 }
