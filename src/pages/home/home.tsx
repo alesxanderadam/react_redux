@@ -75,7 +75,7 @@ const Home = (props?: Props) => {
 
             <div className='row bg-body-product'>
                 {displayPage?.map((item: ProductModel, index) => {
-                    return <div className="col-xl-4 col-sm-6 p-0 " key={index}>
+                    return <div className="col-xxl-4 col-md-6 mt-5 p-0 " key={index}>
                         <ProductCard product={item} />
                     </div>
 

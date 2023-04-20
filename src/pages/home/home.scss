@@ -32,7 +32,6 @@
 
 .background-image-product {
     background-color: rgb(255, 226, 231);
-    // border-radius: 100px;
     overflow: hidden;
     position: relative;
 
@@ -47,7 +46,7 @@
         transition: all 0.4s;
 
         &:hover {
-            background-color: darkgreen;
+            background-color: #D9AAB7;
             color: white;
         }
     }

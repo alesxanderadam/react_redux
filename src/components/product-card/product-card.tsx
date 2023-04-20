@@ -21,32 +21,37 @@ const ProductCard = ({ product }: Props) => {
         if (settings.getStore(ACCESS_TOKEN)) {
             dispatch(addProductToCardAction(product))
         } else {
-            message.warning("Chưa đăng nhập")
+            message.warning("Login ?")
             // history.push(`${PageConstant.login}`)
         }
     }
     return (
-        <div className="product">
-            <div className={`product__card`}>
-                <div className="card__heart">
-                    <HeartOutlined style={{ color: 'red' }} />
+        <div>
+            <div className="about_card_product">
+                <div className="images">
+                    <img src={product.image} alt={product.image} />
                 </div>
-                <h2 className='price__product'>${product.price}</h2>
-                <div className="card__img-product">
-                    <img className='img' height={"190px"} src={product.image} alt="image__product1" />
+                <div className="slideshow-buttons">
+                    <div className="one" />
+                    <div className="two" />
+                    <div className="three" />
+                    <div className="four" />
                 </div>
-                <div className="card__text-product">
-                    <h2>{product.name}</h2>
+                <p className="pick">choose size</p>
+                <div className="sizes">
+                    {sizes?.map((item: number) => {
+                        return <div className='size'>{item}</div>
+                    })}
                 </div>
-            </div>
-            <div className="product__buy">
-                <div className="size__product pb-3">
-                    <h2>Size :</h2>
-                    {sizes.map((item: number, index: number) => <span key={index}>{item}</span>)}
-                </div>
-                <div className="btn__product">
-                    <button><Link style={{ textDecoration: 'none' }} to={`${PageConstant.detail}/${product.id}`}>Buy now</Link></button>
-                    <button onClick={handleAddToCart}>Add cart</button>
+                <div className="product">
+                    <p>Women's Running Shoe</p>
+                    <h1>{product.name}</h1>
+                    <h2>${product.price}</h2>
+                    <p className="desc">{product.description}</p>
+                    <div className="buttons">
+                        <button className="add" onClick={handleAddToCart}>Add to Cart</button>
+                        <button className="like"><span>♥</span></button>
+                    </div>
                 </div>
             </div>
         </div>

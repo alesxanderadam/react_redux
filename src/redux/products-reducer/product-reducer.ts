@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { http, PRODUCT_CARD, settings, TOTAL_QUATITY } from '../../util/config';
-import { ProductDetailModel, ProductModel, ProductState } from '../../models/product.model';
+import { Favorite, ProductDetailModel, ProductModel, ProductState } from '../../models/product.model';
 import { DispatchType } from '../config-store';
 const initialState: ProductState = {
     arrProduct: null,
@@ -9,6 +9,7 @@ const initialState: ProductState = {
     totalAmount: 0,
     productDetail: null,
     loading: false,
+    favorite: []
 }
 
 const productReducer = createSlice({
@@ -17,6 +18,9 @@ const productReducer = createSlice({
     reducers: {
         setArrProductAction: (state: ProductState, action) => {
             state.arrProduct = action.payload
+        },
+        getproductfavoriteAction: (state: ProductState, action: PayloadAction) => {
+            state.favorite = action.payload
         }
     },
     extraReducers(builder) {
@@ -29,7 +33,6 @@ const productReducer = createSlice({
         });
         builder.addCase(getProductDetailApi.fulfilled, (state: ProductState, action: PayloadAction<ProductDetailModel>) => {
             state.loading = false;
-            state.productDetail = action.payload;
         });
         builder.addCase(getProductDetailApi.rejected, (state, action) => {
             state.loading = false;
@@ -121,7 +124,7 @@ const productReducer = createSlice({
         });
     }
 });
-export const { setArrProductAction } = productReducer.actions
+export const { setArrProductAction, getproductfavoriteAction } = productReducer.actions
 export default productReducer.reducer
 /* ---------------- action api async action ----------  */
 export const getProductApi = () => {
@@ -133,6 +136,19 @@ export const getProductApi = () => {
             dispatch(action)
         } catch (err) {
             console.log(err);
+            return;
+        }
+    }
+}
+
+export const getproductfavoriteApi = () => {
+    return async (dispatch: DispatchType): Promise<Favorite> => {
+        try {
+            const result = await http.get(`/api/Users/getproductfavorite`)
+            const action = getproductfavoriteAction(result.data.content)
+            dispatch(action)
+        } catch (err) {
+            console.log(err)
             return;
         }
     }

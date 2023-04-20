@@ -3,8 +3,9 @@ export type ProductState = {
     productCard: ProductDetailModel[] | null,
     quantity: number,
     totalAmount: number,
-    productDetail: ProductDetailModel | null,
-    loading: boolean;
+    productDetail: ProductDetailModel
+    loading: boolean,
+    favorite: any
 }
 
 export interface ProductModel {
@@ -55,3 +56,23 @@ export interface RelatedProduct {
     relatedProducts: string[];
     size: any;
 }
+
+export interface Favorite {
+    productsFavorite: ProductsFavorite[];
+    email: string;
+}
+
+export interface ProductsFavorite {
+    id: number;
+    name: string;
+    image: string;
+}
+
+export interface EditUserProfile {
+    id: number;
+    name: string;
+    phone: number;
+    password: string;
+    gender: boolean
+}
+

@@ -159,7 +159,7 @@ const HomeTemplate = (props: Props) => {
                         <div className='menu-strip d-flex justify-content-center'>
                             <ul className='item-menu d-flex m-0' style={{ textDecoration: "none", listStyle: "none" }}>
                                 <li className='px-2'>Home</li>
-                                <li className='px-2'>About</li>
+                                <li className='px-2'>Profile</li>
                                 <li className='px-2'>Categories</li>
                                 <li className='px-2'>Contact</li>
                             </ul>
@@ -188,7 +188,7 @@ const HomeTemplate = (props: Props) => {
                                 title={<p className='text-center' style={{ color: 'pink', fontWeight: 'bold' }}>MY SHOES</p>}>
                                 <ShoppingCartOutlined />
                             </Popover>
-                            <sub className='total_quatity' style={{ color: '#ff002c' }}>{quantity}</sub>
+                            <sub className='total_quatity' style={{ color: '#BA7E7E' }}>{quantity}</sub>
 
                         </div>
                     </div>

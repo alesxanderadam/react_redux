@@ -64,7 +64,8 @@ body {
 
         .item-menu {
             li {
-                @include text(18px, 500, #000)
+                font-size: 1em;
+                color: #4E4E4E;
             }
         }
     }
@@ -102,7 +103,17 @@ body {
     width: 90%;
     z-index: 1000 !important;
     top: 10px !important;
-    background-color: rgb(232, 175, 194);
+    background-color: #E0C9CB;
+
+    .menu-strip {
+        ul {
+            li {
+                font-size: 16px !important;
+                color: #4E4E4E !important;
+                font-weight: 600;
+            }
+        }
+    }
 }
 
 .false {
