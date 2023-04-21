@@ -7,6 +7,7 @@ import './home.scss'
 import { ProductModel } from '../../models/product.model';
 import ProductCard from '../../components/product-card/product-card';
 import ReactPaginate from 'react-paginate';
+import { ArrowRightOutlined } from '@ant-design/icons';
 type Props = {}
 
 const Home = (props?: Props) => {
@@ -14,7 +15,7 @@ const Home = (props?: Props) => {
     const settings = {
         dots: true,
         infinite: true,
-        speed: 1000,
+        speed: 1500,
         slidesToShow: 1,
         slidesToScroll: 1,
         initialSlide: 1,
@@ -51,20 +52,56 @@ const Home = (props?: Props) => {
         <>
             <Carousel prefixCls=''  {...settings} effect='fade'>
                 {arrProduct?.filter(x => x.id < 5)?.map((item, index) => {
-                    return <div key={index} className='background-carousel mt-5'>
-                        <div className="row align-items-center text-center" >
-                            <div className="col-lg-6 col-12 background-image-product mb-5">
-                                <img className="img-fluid m-auto" width={"400px"} src={item.image}></img>
-                                <button className="btn btn-buy">Buy now</button>
-                            </div>
-                            <div className="col-lg-6 col-12 border-item">
-                                <div className='title-pd-carousel'>
-                                    <h2 className='title-pd-carousel pb-2 m-0'>{item.name.length > 30 ? item.name.substring(0, 30) + " ... " : item.name}</h2>
-                                    <p className='pb-2'>{item.description.length > 200 ? item.description.substring(0, 100) + " ... " : item.description}</p>
+                    return <>
+                        <div className='p-2' key={index}>
+                            <div className='row bg_banner'>
+                                <div className='col-6'>
+                                    <div className='content_banner p-2'>
+                                        <div className='logo_banner'>
+                                            <p>ZAP</p>
+                                            <p>POS</p>
+                                        </div>
+                                        <div className='title_banner'>
+                                            <p>Discover limited sneakers without limitation
+                                            </p>
+                                        </div>
+                                        <button className="btn btn-buy mt-4">START NOW</button>
+                                        <div className='description_banner'>{item.description}</div>
+                                        <div className='link_banner d-flex justify-content-between align-items-center'>
+                                            <ul className='d-flex p-0' style={{ listStyle: 'none' }}>
+                                                <li>Shop</li>
+                                                <li className='mx-3'>Models</li>
+                                                <li>Categorys</li>
+                                            </ul>
+                                            <a href='https://www.facebook.com/letran.quanghuy.31/' className='contact_socialNetwork'>Intagram / Facebook</a>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div className='col-6'>
+                                    <div className='p-2 bg_image_banner'>
+                                        <div className='images_banner'>
+                                            <img className='img-fluid' src={item.image} alt="" />
+                                            <span>0{index}</span>
+                                        </div>
+                                        <div className='information_product_banner'>
+                                            <div className='d-flex justify-content-between px-2'>
+                                                <p>MATERIAL</p>
+                                                <p>X-ELASTIC-SYSTEM</p>
+                                            </div>
+                                            <hr />
+                                            <div className='d-flex justify-content-between px-2'>
+                                                <p>SERIES PRODUCTION</p>
+                                                <p>V1,5 - 2023</p>
+                                            </div>
+                                        </div>
+                                        <p className='detail_product_banner'>View detail product</p>
+                                        <p className='arrow_animation'><ArrowRightOutlined /></p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </>
                 })}
             </Carousel>
 

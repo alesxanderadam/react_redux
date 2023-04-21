@@ -66,9 +66,9 @@ const LoginForm = ({
 
             {checkUser()}
 
-            <Form.Item wrapperCol={{ offset: 9, span: 16 }}>
-                <NavLink className='text-register' to={`${PageConstant.register}`}>Register now ?</NavLink>
-                <Button className='btn-login ms-3' htmlType='submit' type="primary">Login</Button>
+            <Form.Item wrapperCol={{ offset: 9, span: 16 }} className='form_btn'>
+                {user ? <NavLink className='text-register' to={`${PageConstant.register}`}>Register now ?</NavLink> : <NavLink className='text-register' to={`${PageConstant.login}`}>Back to login</NavLink>}
+                <Button className='btn-login ms-3' htmlType='submit' type="primary">{user ? 'Login' : 'Register'}</Button>
             </Form.Item>
         </Form>
     );

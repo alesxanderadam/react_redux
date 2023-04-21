@@ -3,15 +3,14 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { PageConstant } from '../common/page.constant'
 import { DispatchType, RootState } from '../redux/config-store'
 import { useDispatch, useSelector } from 'react-redux'
-import { ACCESS_TOKEN, PRODUCT_CARD, settings, USER_LOGIN } from '../util/config'
+import { ACCESS_TOKEN, PRODUCT_CARD, settings, USER_LOGIN, USER_PROFILE } from '../util/config'
 import { HeartOutlined, SearchOutlined, ShoppingCartOutlined } from '@ant-design/icons'
 import { Button, Input, Popover, Table } from 'antd'
 import { useEffect, useRef, useState } from 'react'
-import './template.scss'
 import { TOTAL_QUATITY } from '../util/config'
 import { ProductDetailModel } from '../models/product.model'
 import { decreaseProductCard, increaseProductCard } from '../redux/products-reducer/product-reducer'
-import { Loader } from '../components/loader/loader'
+import './template.scss'
 
 type Props = {}
 
@@ -23,7 +22,7 @@ const HomeTemplate = (props: Props) => {
     const [showInput, setShowInput] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const inputRef = useRef(null);
-    const total = settings.getStorageJson(PRODUCT_CARD)?.reduce((acc: any, record) => acc + record.price * record.quantity, 0);
+    const total = settings.getStorageJson(PRODUCT_CARD)?.reduce((acc: number, record) => acc + record.price * record.quantity, 0);
     const renderLoginButton = () => {
         if (userLogin) {
             return <>
@@ -34,6 +33,7 @@ const HomeTemplate = (props: Props) => {
                     settings.clearStorage(USER_LOGIN);
                     settings.clearStorage(PRODUCT_CARD);
                     settings.clearStorage(TOTAL_QUATITY);
+                    settings.clearStorage(USER_PROFILE);
                     navigate(`${PageConstant.login}`);
                     window.location.reload();
                 }}>Logout</span>
@@ -155,7 +155,7 @@ const HomeTemplate = (props: Props) => {
             <div className='content' style={{ maxWidth: "90%", margin: "auto" }}>
                 <div className="sub-header py-3 ">
                     <div className={`d-flex justify-content-around align-items-center ${isScrolled && 'scrolled'}`}>
-                        <img src="./images/log_quanghuy.jpg" width={40} height={40} alt="" style={{ verticalAlign: "center" }} />
+                        <img src="./images/log_quanghuy.jpg" alt="" style={{ verticalAlign: "center" }} />
                         <div className='menu-strip d-flex justify-content-center'>
                             <ul className='item-menu d-flex m-0' style={{ textDecoration: "none", listStyle: "none" }}>
                                 <li className='px-2'>Home</li>
@@ -181,7 +181,7 @@ const HomeTemplate = (props: Props) => {
                             <Popover
                                 content={
                                     <div className='about_shopping_card'>
-                                        <Table columns={columns} dataSource={productCard} />
+                                        <Table columns={columns} dataSource={productCard} rowKey="id" />
                                         <p>Total: {total}</p>
                                     </div>
                                 }

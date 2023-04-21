@@ -13,7 +13,7 @@ body {
 }
 
 .header {
-    background-color: #000000 !important;
+    background-color: #4E4E4E !important;
 }
 
 .svg-inline--fa {
@@ -58,6 +58,12 @@ body {
 
 .content {
     .sub-header {
+        img {
+            width: 40px;
+            height: 40px;
+            border-radius: 100rem;
+        }
+
         ul {
             @include text(18px, 500, #000)
         }
