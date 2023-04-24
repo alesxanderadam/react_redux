@@ -1,14 +1,17 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { http, PRODUCT_CARD, settings, TOTAL_QUATITY } from '../../util/config';
-import { Favorite, ProductDetailModel, ProductModel, ProductState } from '../../models/product.model';
+import { http, PRODUCT_CARD, settings, TOTAL_QUATITY, USER_PROFILE } from '../../util/config';
+import { Favorite, Orders, ProductDetailModel, ProductModel, ProductState } from '../../models/product.model';
 import { DispatchType } from '../config-store';
+import { message } from 'antd';
+import { getProfileApi } from '../users-reducer/user-reducer';
 const initialState: ProductState = {
     arrProduct: null,
     productCard: settings.getStorageJson(PRODUCT_CARD) ? settings.getStorageJson(PRODUCT_CARD) : [],
     quantity: settings.getStore(TOTAL_QUATITY) ? settings.getStore(TOTAL_QUATITY) : 0,
     totalAmount: 0,
     productDetail: null,
-    loading: false,
+    loading: true,
+    error: null,
     favorite: []
 }
 
@@ -21,27 +24,38 @@ const productReducer = createSlice({
         },
         getproductfavoriteAction: (state: ProductState, action: PayloadAction) => {
             state.favorite = action.payload
-        }
+        },
+        setLoaddingAcion: ((state: ProductState) => {
+            state.loading = true
+        }),
+        setSuccess: ((state: ProductState) => {
+            state.loading = false;
+            state.error = null;
+        }),
+        setError: ((state: ProductState, action: PayloadAction<any>) => {
+            state.loading = false;
+            state.error = action.payload;
+        })
     },
     extraReducers(builder) {
         //pending: Đang xử lý
         //fulfilled: Đã xử lý thành công
         //rejected: Thất bại
         //Gêt product
-        builder.addCase(getProductDetailApi.pending, (state, action) => {
+        builder.addCase(getProductDetailApi.pending, (state) => {
             state.loading = true;
-        });
-        builder.addCase(getProductDetailApi.fulfilled, (state: ProductState, action: PayloadAction<ProductDetailModel>) => {
-            state.loading = false;
-        });
-        builder.addCase(getProductDetailApi.rejected, (state, action) => {
-            state.loading = false;
         });
 
-        //Add card
-        builder.addCase(addProductToCardAction.pending, (state) => {
-            state.loading = true;
-        })
+        builder.addCase(getProductDetailApi.fulfilled, (state: ProductState, action: PayloadAction<ProductDetailModel>) => {
+            state.loading = false;
+            state.productDetail = action.payload;
+        });
+
+        builder.addCase(getProductDetailApi.rejected, (state: ProductState, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        });
+
         builder.addCase(addProductToCardAction.fulfilled, (state: ProductState, action: PayloadAction<ProductDetailModel>) => {
             state.loading = false;
             const isExisted = state.productCard?.find((item: ProductDetailModel) => item.id === action.payload.id);
@@ -124,7 +138,7 @@ const productReducer = createSlice({
         });
     }
 });
-export const { setArrProductAction, getproductfavoriteAction } = productReducer.actions
+export const { setArrProductAction, getproductfavoriteAction, setLoaddingAcion, setSuccess } = productReducer.actions
 export default productReducer.reducer
 /* ---------------- action api async action ----------  */
 export const getProductApi = () => {
@@ -188,6 +202,7 @@ export const decreaseProductCard = createAsyncThunk('productReducer/decreaseProd
         throw error;
     }
 })
+
 export const increaseProductCard = createAsyncThunk('productReducer/increaseProductCard', async (id: number): Promise<number> => {
     try {
         return id;
@@ -195,3 +210,39 @@ export const increaseProductCard = createAsyncThunk('productReducer/increaseProd
         throw error;
     }
 })
+
+export const deleteOrder = createAsyncThunk<boolean, number, { rejectValue: string }>(
+    'productReducer/deleteOrder',
+    async (id: number, thunkAPI) => {
+        try {
+            const result = await http.post(`/api/Users/deleteOrder`, { orderId: id })
+            if (result.data.statusCode === 200) {
+                let data: Orders = settings.getStorageJson(USER_PROFILE)
+                if (data !== null) {
+                    data.ordersHistory.filter((productId) => productId.id !== id)
+                    settings.setStorageJson(USER_PROFILE, data)
+                }
+                thunkAPI.dispatch(getProfileApi());
+                message.success("Delete success !");
+
+            } else {
+                message.error("Delete not success")
+                return;
+            }
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error.message);
+        }
+    }
+);
+
+export const orderProductApi = createAsyncThunk<boolean, ProductDetailModel, { rejectValue: string }>(
+    'productReducer/orderProductApi',
+    async (product: ProductDetailModel, thunkAPI): Promise<any> => {
+        try {
+            await http.post(`/api/Users/order`, product)
+            return product
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error.message);
+        }
+    }
+);

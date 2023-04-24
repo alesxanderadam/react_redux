@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { DispatchType, RootState } from '../../redux/config-store';
-import { Avatar, Button, Form, Input, Modal, Select, Table, Tag } from 'antd';
+import { Avatar, Button, Form, Input, Modal, Select, Table, Tag, message } from 'antd';
 import utils from '../../util/formater-number';
 import { DeleteOutlined, ExclamationCircleFilled } from '@ant-design/icons';
 import { getProfileApi, updateProfileApi } from '../../redux/users-reducer/user-reducer';
-import { getproductfavoriteApi } from '../../redux/products-reducer/product-reducer';
+import { deleteOrder, getproductfavoriteApi } from '../../redux/products-reducer/product-reducer';
 import './profile.scss'
-import { EditUserProfile, Favorite } from '../../models/product.model';
-import { ProductsFavorite } from '../../models/product.model';
+import { ProductDetailModel, ProductsFavorite } from '../../models/product.model';
 import { UserProfile } from '../../models/user.model';
+import { USER_PROFILE, settings } from '../../util/config';
 type Props = {}
 
 const Profile = (props: Props) => {
@@ -36,7 +36,7 @@ const Profile = (props: Props) => {
     const columns = [
         {
             title: 'id',
-            key: 'id',
+            key: 'Id',
             dataIndex: 'id'
         },
         {
@@ -60,63 +60,56 @@ const Profile = (props: Props) => {
             key: 'name',
             title: 'Name',
             dataIndex: 'orderDetail',
-            render: (data: any) => (
-                <>
-                    {data.map((item, index) => {
-                        return (
-                            <span key={index}>{item.name + ' , '}</span>
-                        )
-                    })}
-                </>
-            )
-        },
-        {
-            key: 'price',
-            title: 'price',
-            dataIndex: 'orderDetail',
-            render: (data: any) => (
-                <>
-                    {data.map((item, index) => {
-                        return (
-                            <span key={index}>{item.price + ' , '}</span>
-                        )
-                    })}
-                </>
-            )
+            render: (data: any) => {
+                let displayString = "";
+                for (let i = 0; i < data.length; i++) {
+                    displayString += data[i].name;
+                    if (i !== data.length - 1) {
+                        displayString += ", ";
+                    }
+                }
+                return <span>{displayString}</span>;
+            }
         },
         {
             key: 'quatatity',
-            title: 'quatatity',
+            title: 'Quatatity',
             dataIndex: 'orderDetail',
-            render: (data: any) => (
-                <>
-                    {data.map((item, index) => {
-                        return (
-                            <Tag color="default" key={index}>{item.quantity}</Tag>
-                        )
-                    })}
+            render: (data: any) => {
+                const count = data.length;
+                return <>
+                    {count}
                 </>
-            )
+            }
+        },
+        {
+            key: 'price',
+            title: 'Total Price',
+            dataIndex: 'orderDetail',
+            render: (data: any) => {
+                const total = data.reduce((accumulator: number, item: ProductDetailModel) => accumulator + item.price, 0);
+                return <>
+                    {total}
+                </>
+            }
         },
         {
             key: 'total',
-            title: 'total',
+            title: 'Total',
             dataIndex: 'orderDetail',
-            render: (data: any) => (
-                <>
-                    {data.map((item, index) => {
-                        return (
-                            <span key={index}>{`${utils.$number.numberFormatter(item.price * item.quantity)}` + ' , '}</span>
-                        )
-                    })}
+            render: (data: any) => {
+                const quatatity = data.length
+                const total = data.reduce((accumulator: number, item: ProductDetailModel) => accumulator + item.price * quatatity, 0);
+                return <>
+                    <span>{`${utils.$number.numberFormatter(total)}`}</span>
                 </>
-            ),
+            },
         }, {
             key: 'delete',
             title: 'Action',
             dataIndex: 'id',
             name: 'orderId',
-            render: (data: any) => (
+            render: (data: number) => (
                 <>
                     <div className="ant-employed d-flex align-items-center justify-content-center">
                         <Button name="orderId" className="mx-2 table-action-button" onClick={() => { showDeleteConfirm(data); }} >
@@ -157,22 +150,20 @@ const Profile = (props: Props) => {
     ];
 
     const { confirm } = Modal;
-    const showDeleteConfirm = (data) => {
+    const showDeleteConfirm = (data: number) => {
         confirm({
-            title: "Xóa giỏ hàng",
+            title: "Delete product cart",
             icon: <ExclamationCircleFilled />,
-            content: `Người dùng: ${data} sẽ bị được xóa? `,
-            okText: "Đồng ý",
+            content: `Product: ${data} is delete? `,
+            okText: "Ok",
             okType: "primary",
-            cancelText: "Không",
+            cancelText: "Cancle",
             onOk() {
-                // const deleteIdProduct = deleteIdProductApi({
-                //     orderId: data
-                // })
-                // dispatch(deleteIdProduct)
+                const deleteIdProduct = deleteOrder(data)
+                dispatch(deleteIdProduct)
             },
             onCancel() {
-                console.log("Hủy");
+                console.log("Cancle");
             },
         });
     };
@@ -187,7 +178,8 @@ const Profile = (props: Props) => {
         }
         dispatch(getproductfavoriteApi())
         form.setFieldsValue(userProfile)
-    }, [userProfile])
+        settings.setStorageJson(USER_PROFILE, userProfile)
+    }, [userProfile, userProfile])
     return (
         <>
             <div className="title-component my-5">
