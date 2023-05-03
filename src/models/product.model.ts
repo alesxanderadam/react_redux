@@ -32,7 +32,7 @@ export interface ProductDetailModel {
     price: number;
     feature: boolean;
     description: string;
-    size: string;
+    size: any[];
     shortDescription: string;
     quantity: number;
     image: string;

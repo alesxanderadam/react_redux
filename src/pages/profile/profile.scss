@@ -17,7 +17,7 @@
         border-bottom: 1px solid #DEDDDC !important;
         border-left: 1px solid #DEDDDC !important;
         border-top: 0px !important;
-        color: #CB0DC3;
+        color: pink;
 
         &:hover {
             color: #000000 !important;
@@ -28,7 +28,7 @@
             font-size: 30px;
 
             &:active {
-                color: #CB0DC3 !important;
+                color: black !important;
             }
 
         }
@@ -74,4 +74,17 @@
 
 #password {
     background: rgba(33, 33, 33, -0.92) !important;
+}
+
+.table-action-button {
+    font-size: 5px;
+    height: 25px;
+    padding: 0px 10px !important;
+    border-radius: 100rem !important;
+    line-height: 20px;
+    color: red;
+
+    span {
+        margin-right: 1px;
+    }
 }

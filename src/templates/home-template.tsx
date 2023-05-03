@@ -1,15 +1,15 @@
 import { Container, Nav, Navbar } from 'react-bootstrap'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { PageConstant } from '../common/page.constant'
 import { DispatchType, RootState } from '../redux/config-store'
 import { useDispatch, useSelector } from 'react-redux'
 import { ACCESS_TOKEN, PRODUCT_CARD, settings, USER_LOGIN, USER_PROFILE } from '../util/config'
-import { HeartOutlined, SearchOutlined, ShoppingCartOutlined } from '@ant-design/icons'
-import { Button, Input, Popover, Table } from 'antd'
+import { DeleteOutlined, ExclamationCircleFilled, HeartOutlined, SearchOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons'
+import { Avatar, Button, Dropdown, Input, MenuProps, Modal, Popover, Space, Table } from 'antd'
 import { useEffect, useRef, useState } from 'react'
 import { TOTAL_QUATITY } from '../util/config'
 import { ProductDetailModel } from '../models/product.model'
-import { decreaseProductCard, increaseProductCard } from '../redux/products-reducer/product-reducer'
+import { decreaseProductCard, increaseProductCard, orderProductApi } from '../redux/products-reducer/product-reducer'
 import './template.scss'
 
 type Props = {}
@@ -17,29 +17,27 @@ type Props = {}
 const HomeTemplate = (props: Props) => {
     const navigate = useNavigate();
     const dispatch: DispatchType = useDispatch();
-    const { userLogin } = useSelector((state: RootState) => state.userReducer)
+    const { userLogin, userProfile } = useSelector((state: RootState) => state.userReducer)
     const { quantity, productCard } = useSelector((state: RootState) => state.productReducer)
     const [showInput, setShowInput] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
+    const [visible, setVisible] = useState(false);
     const inputRef = useRef(null);
     const total = settings.getStorageJson(PRODUCT_CARD)?.reduce((acc: number, record) => acc + record.price * record.quantity, 0);
     const renderLoginButton = () => {
         if (userLogin) {
-            return <>
-                <NavLink to={`${PageConstant.profile}`}
-                    style={{ textDecoration: 'none' }}> <h5 className='login mx-2'> He sờ lô ! {userLogin.email}</h5></NavLink>
-                <span className='text-danger' style={{ cursor: 'pointer', paddingRight: '15px' }} onClick={() => {
-                    settings.clearStorage(ACCESS_TOKEN);
-                    settings.clearStorage(USER_LOGIN);
-                    settings.clearStorage(PRODUCT_CARD);
-                    settings.clearStorage(TOTAL_QUATITY);
-                    settings.clearStorage(USER_PROFILE);
-                    navigate(`${PageConstant.login}`);
-                    window.location.reload();
-                }}>Logout</span>
-            </>
+            return <ul className="nav navbar-nav nav-flex-icons mx-3 flex-row">
+                <Dropdown menu={{ items }} placement="bottomLeft" arrow>
+                    <Avatar src={userProfile?.avatar && userProfile?.avatar} size="large" />
+                </Dropdown>
+            </ul>
         }
-        return <NavLink to={`${PageConstant.login}`} style={{ textDecoration: 'none' }}><h5 className='login mx-2'>Login</h5></NavLink>;
+        return (
+            <>
+                <NavLink to={`${PageConstant.login}`} style={{ textDecoration: 'none' }}><h5 className='login mx-2'>Login</h5></NavLink>
+                <NavLink to={`${PageConstant.register}`} style={{ textDecoration: 'none' }}><h5 className='login mx-2'>Register</h5></NavLink>
+            </>
+        )
     }
     const handleClick = () => {
         setShowInput(true);
@@ -83,6 +81,32 @@ const HomeTemplate = (props: Props) => {
         };
     }, [isScrolled]);
 
+    const items: MenuProps['items'] = [
+        {
+            key: '1',
+            label: (
+                <NavLink style={{ textDecoration: 'none' }} to={PageConstant.profile}>
+                    Profile
+                </NavLink>
+            ),
+        },
+        {
+            key: '2',
+            label: (
+                <span style={{ color: 'red' }} onClick={() => {
+                    settings.clearStorage(ACCESS_TOKEN);
+                    settings.clearStorage(USER_LOGIN);
+                    settings.clearStorage(PRODUCT_CARD);
+                    settings.clearStorage(TOTAL_QUATITY);
+                    settings.clearStorage(USER_PROFILE);
+                    window.location.reload();
+                }}>
+                    Logout
+                </span>
+            ),
+        },
+    ];
+
     const columns = [
         {
             title: "ID",
@@ -92,6 +116,7 @@ const HomeTemplate = (props: Props) => {
         {
             title: "Name",
             dataIndex: "name",
+            width: 170,
             key: "name"
         },
         {
@@ -102,6 +127,7 @@ const HomeTemplate = (props: Props) => {
         {
             title: "Quantity",
             key: "quantity",
+            width: 130,
             render: (data: ProductDetailModel) => (
                 <>
                     <Button className='btn_quatity' onClick={() => {
@@ -132,8 +158,34 @@ const HomeTemplate = (props: Props) => {
                 const total = record.price * record.quantity;
                 return <span>{total}</span>;
             },
+        },
+        {
+            title: "Action",
+            key: "id",
+            render: (data: ProductDetailModel) => {
+                return <Button className='action_delete_antd' onClick={() => {
+                    setVisible(false)
+                    showDeleteConfirm(data)
+                }}><DeleteOutlined style={{ color: 'red' }} /></Button>
+            },
         }
     ];
+
+    const { confirm } = Modal;
+    const showDeleteConfirm = (data: ProductDetailModel) => {
+        confirm({
+            title: "Delete product",
+            icon: <ExclamationCircleFilled />,
+            content: `Product name: ${data.name} will delete ? `,
+            okText: "Yes",
+            okType: "primary",
+            cancelText: "No",
+            onOk() {
+                const deleteIdProduct = decreaseProductCard(data.id);
+                dispatch(deleteIdProduct);
+            }
+        });
+    };
 
     return (
         <>
@@ -141,27 +193,34 @@ const HomeTemplate = (props: Props) => {
                 <Container fluid>
                     <Navbar.Brand>
                         <NavLink to={`${PageConstant.home}`}>
-                            <img alt="" src="./images/Cyber-Logo.png" className="d-inline-block align-top" />
+                            <img alt="" src="./images/log_quanghuy.jpg" className="img-fluid" width={40} height={40} style={{ borderRadius: "100rem" }} />
                         </NavLink>
                     </Navbar.Brand>
                     <Navbar.Toggle aria-controls="navbarScroll" />
                     <Navbar.Collapse id="navbarScroll">
                         <Nav className="me-auto my-2 my-lg-0" style={{ maxHeight: '100px' }} navbarScroll> </Nav>
                         {renderLoginButton()}
-                        <NavLink style={{ textDecoration: 'none' }} to={`${PageConstant.register}`}><h5 className='login mx-2'>Register</h5></NavLink>
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
             <div className='content' style={{ maxWidth: "90%", margin: "auto" }}>
                 <div className="sub-header py-3 ">
                     <div className={`d-flex justify-content-around align-items-center ${isScrolled && 'scrolled'}`}>
-                        <img src="./images/log_quanghuy.jpg" alt="" style={{ verticalAlign: "center" }} />
+                        <img src="./images/logo_nike.png" alt="" style={{ verticalAlign: "center" }} />
                         <div className='menu-strip d-flex justify-content-center'>
                             <ul className='item-menu d-flex m-0' style={{ textDecoration: "none", listStyle: "none" }}>
-                                <li className='px-2'>Home</li>
-                                <li className='px-2'>Profile</li>
-                                <li className='px-2'>Categories</li>
-                                <li className='px-2'>Contact</li>
+                                <Link to={`${PageConstant.home}`} className='px-2'>
+                                    Home
+                                </Link>
+                                <Link to={`${PageConstant.profile}`} className='px-2'>
+                                    Profile
+                                </Link>
+                                <Link to={`${PageConstant.cart}`} className='px-2'>
+                                    Cart
+                                </Link>
+                                <Link to={`${PageConstant.home}`} className='px-2'>
+                                    Contact
+                                </Link>
                             </ul>
                         </div>
                         <div className='like-and-cart d-flex justify-content-around align-items-center'>
@@ -179,17 +238,27 @@ const HomeTemplate = (props: Props) => {
                             </div>
                             <HeartOutlined className='me-3' />
                             <Popover
+                                open={visible}
+                                onOpenChange={setVisible}
                                 content={
                                     <div className='about_shopping_card'>
-                                        <Table columns={columns} dataSource={productCard} rowKey="id" />
-                                        <p>Total: {total}</p>
+                                        <Table sticky={true} columns={columns} dataSource={productCard} rowKey="id" />
+                                        <div className='pay d-flex justify-content-between align-items-center px-2'>
+                                            <p className='m-0'>Total: {total}</p>
+                                            <button className='btn_order' onClick={() => {
+                                                dispatch(orderProductApi(settings.getStorageJson(PRODUCT_CARD)))
+                                                settings.clearStorage(PRODUCT_CARD)
+                                                settings.clearStorage(TOTAL_QUATITY)
+                                                window.location.reload();
+                                            }}>Order</button>
+                                        </div>
+
                                     </div>
                                 }
                                 title={<p className='text-center' style={{ color: 'pink', fontWeight: 'bold' }}>MY SHOES</p>}>
                                 <ShoppingCartOutlined />
                             </Popover>
                             <sub className='total_quatity' style={{ color: '#BA7E7E' }}>{quantity}</sub>
-
                         </div>
                     </div>
                 </div>

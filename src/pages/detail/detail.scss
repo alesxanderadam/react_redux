@@ -1,0 +1,108 @@
+.bg_image_banner {
+    width: 380px;
+    background-color: #f2f0ef;
+    margin: auto;
+    height: 460px;
+    position: relative;
+    border-radius: 10px;
+}
+
+.content_product_detail {
+    h3 {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    p {
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .product_detail_price {
+        width: 70%;
+
+        h5 {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        p {
+            color: rgb(61, 234, 61);
+        }
+    }
+
+    .sub_discount {
+        p {
+            color: #d0d0cf;
+            line-height: 5px;
+        }
+    }
+
+    .product_detail_sizes {
+        width: 70%;
+        margin-top: 50px;
+
+        .title_size {
+            p {
+                margin-bottom: 0;
+                font-size: 14px;
+
+                &:nth-of-type(1) {
+                    font-weight: 600;
+                }
+
+                &:nth-of-type(2) {
+                    color: #d0d0cf;
+                }
+            }
+        }
+
+        button {
+            padding: 7px 40px;
+            background-color: transparent;
+            border: 1px solid #d0d0cf;
+            border-radius: 5px;
+            margin: 8px 8px 0px 0px;
+        }
+    }
+
+    .btn_product_detail {
+        margin-top: 40px;
+        width: 60%;
+
+        button {
+            width: 100%;
+            display: block;
+            padding: 14px 40px;
+            margin-top: 10px;
+            border-radius: 30px;
+
+            &:nth-of-type(1) {
+                background-color: black;
+                color: azure;
+            }
+
+            &:nth-of-type(2) {
+                background-color: transparent;
+                border: 1px solid black;
+                border-radius: 30px;
+            }
+        }
+    }
+
+    .description_detail {
+        margin-top: 30px;
+
+        h5 {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 14px;
+            font-weight: 500;
+            color: black;
+        }
+
+    }
+}

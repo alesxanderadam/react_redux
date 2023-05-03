@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { http, PRODUCT_CARD, settings, TOTAL_QUATITY, USER_PROFILE } from '../../util/config';
+import { http, PRODUCT_CARD, settings, TOTAL_QUATITY, USER_LOGIN, USER_PROFILE } from '../../util/config';
 import { Favorite, Orders, ProductDetailModel, ProductModel, ProductState } from '../../models/product.model';
 import { DispatchType } from '../config-store';
 import { message } from 'antd';
@@ -235,14 +235,29 @@ export const deleteOrder = createAsyncThunk<boolean, number, { rejectValue: stri
     }
 );
 
-export const orderProductApi = createAsyncThunk<boolean, ProductDetailModel, { rejectValue: string }>(
-    'productReducer/orderProductApi',
-    async (product: ProductDetailModel, thunkAPI): Promise<any> => {
+export const orderProductApi = createAsyncThunk<boolean, ProductDetailModel[], { rejectValue: string }>('productReducer/orderProductApi',
+    async (product: ProductDetailModel[], thunkAPI) => {
         try {
-            await http.post(`/api/Users/order`, product)
-            return product
+            const orderDetail = product?.map((cart) => {
+                return {
+                    productId: String(cart.id),
+                    quantity: cart.quantity
+                }
+            })
+            const payload = {
+                orderDetail,
+                email: settings.getStorageJson(USER_LOGIN).email
+            }
+            let result = await http.post(`/api/Users/order`, payload)
+            if (result.data.statusCode === 200) {
+                thunkAPI.dispatch(getProfileApi());
+                return message.success(result.data.content)
+            }
+            return;
+
         } catch (error) {
-            return thunkAPI.rejectWithValue(error.message);
+            console.log(error)
+            return;
         }
     }
 );

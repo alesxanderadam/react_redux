@@ -16,6 +16,14 @@ body {
     background-color: #E0C9CB !important;
 }
 
+.action_delete_antd {
+    font-size: 12px;
+    height: 30px;
+    padding: 0px 15px !important;
+    border-radius: 100rem !important;
+    line-height: 10px;
+}
+
 .svg-inline--fa {
     position: absolute;
     left: -30%;
@@ -69,9 +77,16 @@ body {
         }
 
         .item-menu {
-            li {
+            a {
+                text-decoration: none;
                 font-size: 1em;
-                color: #4E4E4E;
+                color: black;
+                font-weight: 500;
+                transition: color 0.5s;
+
+                &:hover {
+                    color: blueviolet;
+                }
             }
         }
     }
@@ -180,7 +195,27 @@ footer {
 }
 
 .about_shopping_card {
-    width: 650px;
+    width: 700px;
+
+    .pay {
+        padding: 20px 0 10px 0;
+
+        button {
+            padding: 5px 40px;
+            background-color: pink;
+            color: #FFFFFF;
+            font-weight: bold;
+            border-radius: 20px;
+            border: 0px;
+            transition: all 0.5s ease-in-out;
+
+            &:hover {
+                background-color: transparent;
+                border: 1px solid pink;
+                color: #000000;
+            }
+        }
+    }
 }
 
 .btn_quatity {

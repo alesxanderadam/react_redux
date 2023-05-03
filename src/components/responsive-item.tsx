@@ -24,7 +24,6 @@ const ResponsiveItem = (props: Props) => {
     }
     useEffect(() => {
         window.onload = setScreenWindow;
-
         return () => {
             window.removeEventListener('load', setScreenWindow)
         }

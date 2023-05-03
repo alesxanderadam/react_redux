@@ -70,8 +70,7 @@ const Home = (props?: Props) => {
                                                 <p>POS</p>
                                             </div>
                                             <div className='title_banner'>
-                                                <p>Discover limited sneakers without limitation
-                                                </p>
+                                                <p>Discover limited sneakers without limitation</p>
                                             </div>
                                             <button className="btn btn-buy mt-4">START NOW</button>
                                             <div className='description_banner'>{item.description}</div>

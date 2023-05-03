@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { DispatchType, RootState } from '../../redux/config-store';
-import { Avatar, Button, Form, Input, Modal, Select, Table, Tag, message } from 'antd';
+import { Avatar, Button, Form, Input, Modal, Select, Table } from 'antd';
 import utils from '../../util/formater-number';
 import { DeleteOutlined, ExclamationCircleFilled } from '@ant-design/icons';
 import { getProfileApi, updateProfileApi } from '../../redux/users-reducer/user-reducer';
@@ -16,16 +16,24 @@ const Profile = (props: Props) => {
     const dispatch: DispatchType = useDispatch();
     const { userProfile } = useSelector((state: RootState) => state.userReducer)
     const { favorite } = useSelector((state: RootState) => state.productReducer)
-    let arrProduct = [];
-    let arrayProductFavorite = [];
-    if (userProfile) {
-        arrProduct = userProfile.ordersHistory;
-    }
-    if (arrayProductFavorite) {
-        arrayProductFavorite = favorite.productsFavorite
-    }
-
+    const [arrProduct, setArrProduct] = useState<any[]>([]);
+    const [arrayProductFavorite, setArrayProductFavorite] = useState<ProductsFavorite[]>([]);
     const [form] = Form.useForm();
+
+    useEffect(() => {
+        if (!userProfile) {
+            dispatch(getProfileApi())
+        } else {
+            setArrProduct(userProfile.ordersHistory);
+            form.setFieldsValue(userProfile)
+        }
+        if (!favorite) {
+            dispatch(getproductfavoriteApi())
+        } else {
+            setArrayProductFavorite(favorite.productsFavorite);
+        }
+        settings.setStorageJson(USER_PROFILE, userProfile)
+    }, [userProfile, userProfile])
     const validateMessages = {
         required: '${label} is required!',
         types: {
@@ -89,7 +97,7 @@ const Profile = (props: Props) => {
             render: (data: any) => {
                 const total = data.reduce((accumulator: number, item: ProductDetailModel) => accumulator + item.price, 0);
                 return <>
-                    {total}
+                    {total}$
                 </>
             }
         },
@@ -101,7 +109,7 @@ const Profile = (props: Props) => {
                 const quatatity = data.length
                 const total = data.reduce((accumulator: number, item: ProductDetailModel) => accumulator + item.price * quatatity, 0);
                 return <>
-                    <span>{`${utils.$number.numberFormatter(total)}`}</span>
+                    <span>{`${utils.$number.numberFormatter(total)}`}$</span>
                 </>
             },
         }, {
@@ -112,7 +120,7 @@ const Profile = (props: Props) => {
             render: (data: number) => (
                 <>
                     <div className="ant-employed d-flex align-items-center justify-content-center">
-                        <Button name="orderId" className="mx-2 table-action-button" onClick={() => { showDeleteConfirm(data); }} >
+                        <Button danger={true} name="orderId" className="mx-2 table-action-button" onClick={() => { showDeleteConfirm(data); }} >
                             <DeleteOutlined style={{ fontSize: '14px', marginBottom: '5px' }} />
                         </Button>
                     </div>
@@ -172,14 +180,7 @@ const Profile = (props: Props) => {
         dispatch(editProfile)
     }
 
-    useEffect(() => {
-        if (!userProfile) {
-            dispatch(getProfileApi())
-        }
-        dispatch(getproductfavoriteApi())
-        form.setFieldsValue(userProfile)
-        settings.setStorageJson(USER_PROFILE, userProfile)
-    }, [userProfile, userProfile])
+
     return (
         <>
             <div className="title-component my-5">
@@ -235,11 +236,11 @@ const Profile = (props: Props) => {
                     <div className="tab-content">
                         <div className="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
                             <div className="product-table">
-                                <Table columns={columns} dataSource={arrProduct} />
+                                <Table rowKey="id" columns={columns} dataSource={arrProduct} />
                             </div>
                         </div>
                         <div className="tab-pane " id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                            <Table columns={columnFavouriteProduct} dataSource={arrayProductFavorite} />
+                            <Table rowKey="id" columns={columnFavouriteProduct} dataSource={arrayProductFavorite} />
                         </div>
                     </div>
                 </div>
