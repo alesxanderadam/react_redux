@@ -19,6 +19,9 @@ const userReducer = createSlice({
     reducers: {},
     extraReducers(builder) {
         builder.addCase(userLoginApi.fulfilled, (state: userState, action: PayloadAction<userLoginResult>) => {
+            if (action.payload === undefined) {
+                return;
+            }
             state.userLogin = action.payload;
             message.success("Login success")
             settings.setStorageJson(USER_LOGIN, action.payload);
@@ -46,7 +49,10 @@ export default userReducer.reducer
 export const userLoginApi = createAsyncThunk('userReducer/userLoginApi', async (userLogin: userLoginModel): Promise<userLoginResult> => {
     try {
         const result = await http.post('/api/Users/signin', userLogin)
-        return result.data.content
+        if (result.data.statusCode === 200) {
+            return result.data.content
+        }
+        return;
     } catch (err) {
         console.log(err)
         return;
