@@ -28,7 +28,7 @@ const HomeTemplate = (props: Props) => {
         if (userLogin) {
             return <ul className="nav navbar-nav nav-flex-icons mx-3 flex-row">
                 <Dropdown menu={{ items }} placement="bottomLeft" arrow>
-                    <Avatar src={userProfile?.avatar && userProfile?.avatar} size="large" />
+                    <Avatar icon={<UserOutlined />} size="large" />
                 </Dropdown>
             </ul>
         }

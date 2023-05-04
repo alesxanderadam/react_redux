@@ -18,7 +18,6 @@ const Home = (props?: Props) => {
         dots: true,
         infinite: true,
         speed: 1500,
-        slidesToShow: 1,
         slidesToScroll: 1,
         initialSlide: 1,
         pauseOnDotsHover: true,
