@@ -5,7 +5,7 @@ import { Avatar, Button, Form, Input, Modal, Select, Table } from 'antd';
 import utils from '../../util/formater-number';
 import { DeleteOutlined, ExclamationCircleFilled } from '@ant-design/icons';
 import { getProfileApi, updateProfileApi } from '../../redux/users-reducer/user-reducer';
-import { deleteOrder, getproductfavoriteApi } from '../../redux/products-reducer/product-reducer';
+import { deleteOrder, getproductfavoriteApi, productsUserUnLikeApi } from '../../redux/products-reducer/product-reducer';
 import './profile.scss'
 import { ProductDetailModel, ProductsFavorite } from '../../models/product.model';
 import { UserProfile } from '../../models/user.model';
@@ -27,13 +27,15 @@ const Profile = (props: Props) => {
             setArrProduct(userProfile.ordersHistory);
             form.setFieldsValue(userProfile)
         }
-        if (!favorite) {
-            dispatch(getproductfavoriteApi())
-        } else {
-            setArrayProductFavorite(favorite.productsFavorite);
-        }
         settings.setStorageJson(USER_PROFILE, userProfile)
-    }, [userProfile, userProfile])
+        if (favorite === null) {
+            dispatch(getproductfavoriteApi())
+        }
+    }, [userProfile, favorite])
+
+    useEffect(() => {
+        setArrayProductFavorite(favorite?.productsFavorite)
+    }, [favorite])
     const validateMessages = {
         required: '${label} is required!',
         types: {
@@ -154,6 +156,16 @@ const Profile = (props: Props) => {
             title: 'Name',
             dataIndex: 'name',
             width: "20%"
+        },
+        {
+            key: 'action',
+            title: 'Action',
+            width: "20%",
+            render: (data: ProductDetailModel) => {
+                return <Button className='action_delete_antd' onClick={() => {
+                    dispatch(productsUserUnLikeApi(data.id))
+                }}><DeleteOutlined style={{ color: 'red' }} /></Button>
+            },
         },
     ];
 

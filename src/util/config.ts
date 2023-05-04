@@ -12,7 +12,7 @@ export const PRODUCT_CARD: string = "productCard"
 
 export const http = axios.create({
     baseURL: DOMAIN,
-    timeout: 30000,
+    timeout: 100000,
 });
 
 http.interceptors.request.use((config) => {

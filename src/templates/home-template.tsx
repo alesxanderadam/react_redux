@@ -15,7 +15,6 @@ import './template.scss'
 type Props = {}
 
 const HomeTemplate = (props: Props) => {
-    const navigate = useNavigate();
     const dispatch: DispatchType = useDispatch();
     const { userLogin, userProfile } = useSelector((state: RootState) => state.userReducer)
     const { quantity, productCard } = useSelector((state: RootState) => state.productReducer)
@@ -247,9 +246,6 @@ const HomeTemplate = (props: Props) => {
                                             <p className='m-0'>Total: {total}</p>
                                             <button className='btn_order' onClick={() => {
                                                 dispatch(orderProductApi(settings.getStorageJson(PRODUCT_CARD)))
-                                                settings.clearStorage(PRODUCT_CARD)
-                                                settings.clearStorage(TOTAL_QUATITY)
-                                                window.location.reload();
                                             }}>Order</button>
                                         </div>
 

@@ -10,6 +10,7 @@ import Detail from './pages/detail/detail';
 import Login from './pages/login/login';
 import Register from './pages/register/register';
 import Profile from './pages/profile/profile';
+import Cart from './pages/cart/cart';
 export const history: any = createBrowserHistory()
 
 
@@ -23,6 +24,7 @@ export default function App() {
                     <Route path={`${PageConstant.login}`} element={<Login />}></Route>
                     <Route path={`${PageConstant.register}`} element={<Register />}></Route>
                     <Route path={`${PageConstant.profile}`} element={<Profile />}></Route>
+                    <Route path={`${PageConstant.cart}`} element={<Cart />}></Route>
                 </Route>
             </Routes>
         </HistoryBrowser>

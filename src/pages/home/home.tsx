@@ -60,7 +60,7 @@ const Home = (props?: Props) => {
                 <Carousel prefixCls=''  {...settings} effect='fade'>
                     {arrProduct?.filter(x => x.id < 5)?.map((item, index) => {
                         return <>
-                            <div className='p-2' key={index}>
+                            <div className='p-2 banner_slide' key={index}>
                                 <div className='row bg_banner'>
                                     <div className='col-6'>
                                         <div className='content_banner p-2'>

@@ -208,3 +208,117 @@
         }
     }
 }
+
+//response sive
+@media all and (max-width: 995px) {
+    .banner_slide {
+        .content_banner {
+            .title_banner {
+                p {}
+            }
+
+            .description_banner {
+                margin-top: 30px !important;
+            }
+
+            .link_banner {
+                margin-top: 3em;
+
+                a.contact_socialNetwork {
+                    padding: 2px 3px;
+                    font-size: 13px;
+                }
+            }
+        }
+
+        .bg_image_banner {
+            width: 375px !important;
+            height: 90% !important;
+        }
+    }
+}
+
+@media all and (max-width: 785px) {
+    .banner_slide {
+        .content_banner {
+            .title_banner {
+                p {
+                    font-size: 35px !important;
+                    line-height: 45px !important;
+                }
+            }
+
+            .description_banner {
+                margin-top: 30px !important;
+            }
+
+            .link_banner {
+                margin-top: 3em;
+
+                a.contact_socialNetwork {
+                    padding: 2px 3px;
+                    font-size: 13px;
+                }
+            }
+        }
+
+        .bg_image_banner {
+            width: 320px !important;
+            height: 98% !important;
+
+            .information_product_banner {
+                display: none;
+            }
+        }
+    }
+
+    p {
+        margin: 0;
+    }
+}
+
+@media all and (max-width: 700px) {
+    .banner_slide {
+        .content_banner {
+            .title_banner {
+                p {
+                    font-size: 31px !important;
+                    line-height: 40px !important;
+                }
+            }
+
+            .description_banner {
+                margin-top: 30px !important;
+            }
+
+            .link_banner {
+                margin-top: 3em;
+                font-size: 10px;
+
+                a.contact_socialNetwork {
+                    padding: 2px 3px;
+                    font-size: 10px;
+                }
+            }
+        }
+
+        .bg_image_banner {
+            width: 288px !important;
+            height: 98% !important;
+
+            .images_banner {
+                width: 90%;
+                margin: auto;
+                position: relative;
+            }
+
+            .information_product_banner {
+                display: none;
+            }
+        }
+    }
+
+    p {
+        margin: 0;
+    }
+}

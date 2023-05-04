@@ -1,0 +1,17 @@
+.btn-checkout {
+    float: right;
+    background: pink !important;
+    width: 110px;
+    height: 48px;
+    border-radius: 50px;
+    font-weight: 500;
+    color: aliceblue;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.btn-checkout:hover {
+    color: #6200EE !important;
+    background: white !important;
+    border: 1px solid #6200EE !important;
+}

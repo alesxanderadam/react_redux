@@ -12,7 +12,7 @@ const initialState: ProductState = {
     productDetail: null,
     loading: true,
     error: null,
-    favorite: []
+    favorite: null
 }
 
 const productReducer = createSlice({
@@ -167,6 +167,38 @@ export const getproductfavoriteApi = () => {
         }
     }
 }
+
+export const productsUserLikeApi = (idProduct: number) => {
+    return async (dispatch: DispatchType): Promise<void> => {
+        try {
+            const result = await http.get(`/api/Users/like?productId=${idProduct}`)
+            if (result.data.statusCode === 200) {
+                message.success("Like success")
+            }
+            return;
+        } catch (err) {
+            message.error(`${err.content}`)
+        }
+    }
+}
+
+export const productsUserUnLikeApi = (idProduct: number) => {
+    return async (dispatch: DispatchType): Promise<void> => {
+        try {
+            const result = await http.get(`/api/Users/unlike?productId=${idProduct}`)
+            if (result.data.statusCode === 200) {
+                message.success("Unlike success")
+            }
+            return;
+        } catch (err) {
+            message.error(`${err.content}`)
+        }
+    }
+}
+
+
+
+
 /* ------------------ create asyn thunk ----------------------------------*/
 export const getProductDetailApi = createAsyncThunk('productReducer/getProductDetailApi', async (productId: number): Promise<ProductDetailModel> => {
     try {
@@ -238,23 +270,26 @@ export const deleteOrder = createAsyncThunk<boolean, number, { rejectValue: stri
 export const orderProductApi = createAsyncThunk<boolean, ProductDetailModel[], { rejectValue: string }>('productReducer/orderProductApi',
     async (product: ProductDetailModel[], thunkAPI) => {
         try {
-            const orderDetail = product?.forEach((cart) => {
+            const orderDetail = product?.map((cart) => {
                 return {
                     productId: String(cart.id),
                     quantity: cart.quantity
                 }
             })
-            const payload = {
+            let result = await http.post(`/api/Users/order`, {
                 orderDetail,
                 email: settings.getStorageJson(USER_LOGIN).email
-            }
-            let result = await http.post(`/api/Users/order`, payload)
-            console.log(result)
+            })
             if (result.data.statusCode === 200) {
                 thunkAPI.dispatch(getProfileApi());
+                settings.clearStorage(PRODUCT_CARD)
+                settings.clearStorage(TOTAL_QUATITY);
+                window.location.reload();
                 return message.success("Order success");
+            } else {
+                message.error("Order faild")
+                return;
             }
-            return;
 
         } catch (error) {
             console.log(error)
@@ -262,3 +297,4 @@ export const orderProductApi = createAsyncThunk<boolean, ProductDetailModel[], {
         }
     }
 );
+

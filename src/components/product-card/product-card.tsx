@@ -2,7 +2,7 @@ import { ProductDetailModel, ProductModel, RelatedProduct } from '../../models/p
 import './product-card.scss'
 import { PageConstant } from '../../common/page.constant';
 import { useDispatch } from 'react-redux';
-import { addProductToCardAction } from '../../redux/products-reducer/product-reducer';
+import { addProductToCardAction, productsUserLikeApi } from '../../redux/products-reducer/product-reducer';
 import { DispatchType } from '../../redux/config-store';
 import { ACCESS_TOKEN, settings } from '../../util/config';
 import { message } from 'antd';
@@ -52,7 +52,10 @@ const ProductCard = ({ product }: Props) => {
                     <p className="desc">{product.description}</p>
                     <div className="buttons">
                         <button className="add" onClick={handleAddToCart}>Add to Cart</button>
-                        <button className="like"><span>♥</span></button>
+                        <button className="like"
+                            onClick={() => {
+                                dispatch(productsUserLikeApi(product.id))
+                            }}><span>♥</span></button>
                         <p className='view_detail_products mt-3' onClick={() => {
                             navigate(`${PageConstant.detail}/${product.id}`)
                         }}>View detail product</p>
