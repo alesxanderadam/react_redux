@@ -14,7 +14,6 @@ type Props = {}
 const Detail = ({ }: Props) => {
     const { id }: any = useParams()
     const { productDetail } = useSelector((state: RootState) => state.productReducer)
-    console.log(productDetail)
     const dispatch: DispatchType = useDispatch();
 
     const handleAddToCart = () => {

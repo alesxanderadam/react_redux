@@ -33,8 +33,10 @@ const userReducer = createSlice({
             message.success("Register success")
         });
         builder.addCase(getProfileApi.fulfilled, (state: userState, action: PayloadAction<UserProfile>) => {
-            state.userProfile = action.payload;
-            settings.setStorageJson(USER_PROFILE, action.payload);
+            if (action.payload !== undefined) {
+                state.userProfile = action.payload;
+                settings.setStorageJson(USER_PROFILE, action.payload);
+            }
         });
         builder.addCase(updateProfileApi.fulfilled, (state: userState, action: PayloadAction<UserProfile>) => {
             state.userProfile = { ...state.userProfile, ...action.payload }
@@ -49,30 +51,33 @@ export default userReducer.reducer
 export const userLoginApi = createAsyncThunk('userReducer/userLoginApi', async (userLogin: userLoginModel): Promise<userLoginResult> => {
     try {
         const result = await http.post('/api/Users/signin', userLogin)
-        if (result.data.statusCode === 200) {
+        if (result?.data.statusCode === 200) {
             return result.data.content
         }
         return;
     } catch (err) {
-        console.log(err)
         return;
     }
 })
 export const userRegisterApi = createAsyncThunk('userReducer/userRegisterApi', async (userRegister: UserUpdateModel): Promise<userRegisterResult> => {
     try {
         const result = await http.post('/api/Users/signup', userRegister)
-        return result?.data?.content;
+        if (result?.data.statusCode === 200) {
+            return result.data.content
+        }
     } catch (err) {
-        console.log(err)
+        message.error(err)
         return;
     }
 })
 export const getProfileApi = createAsyncThunk('userReducer/getProfileApi', async (): Promise<UserProfile> => {
     try {
         const result = await http.post('/api/Users/getProfile')
-        return result?.data?.content
+        if (result?.data?.statusCode === 200) {
+            return result.data.content
+        }
+        return;
     } catch (err) {
-        console.log(err)
         return;
     }
 })

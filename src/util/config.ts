@@ -40,7 +40,7 @@ http.interceptors.response.use((response) => {
         }
         return Promise.reject(error)
     } catch (err) {
-        console.log(err)
+        return;
     }
 })
 

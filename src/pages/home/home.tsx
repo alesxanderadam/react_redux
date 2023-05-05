@@ -51,7 +51,6 @@ const Home = (props?: Props) => {
         dispatch(getProductApi()).then(() => {
             dispatch(setSuccess())
         }).catch((error) => {
-            console.log(error)
         })
     }, [])
     return (

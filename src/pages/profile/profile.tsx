@@ -25,9 +25,10 @@ const Profile = (props: Props) => {
             dispatch(getProfileApi())
         } else {
             setArrProduct(userProfile.ordersHistory);
+            settings.setStorageJson(USER_PROFILE, userProfile)
+
             form.setFieldsValue(userProfile)
         }
-        settings.setStorageJson(USER_PROFILE, userProfile)
         if (favorite === null) {
             dispatch(getproductfavoriteApi())
         }

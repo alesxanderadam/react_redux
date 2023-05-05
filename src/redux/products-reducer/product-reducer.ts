@@ -149,7 +149,6 @@ export const getProductApi = () => {
             const action: PayloadAction<ProductModel[]> = setArrProductAction(content)
             dispatch(action)
         } catch (err) {
-            console.log(err);
             return;
         }
     }
@@ -162,7 +161,6 @@ export const getproductfavoriteApi = () => {
             const action = getproductfavoriteAction(result.data.content)
             dispatch(action)
         } catch (err) {
-            console.log(err)
             return;
         }
     }
@@ -206,7 +204,7 @@ export const getProductDetailApi = createAsyncThunk('productReducer/getProductDe
         return result.data.content;
     }
     catch (err) {
-        console.log(err)
+        return;
     }
 })
 
@@ -214,7 +212,6 @@ export const addProductToCardAction = createAsyncThunk('productReducer/addProduc
     try {
         return product
     } catch (error) {
-        console.log(error)
         return;
     }
 })
