@@ -18,9 +18,6 @@ const Cart = (props: Props) => {
         const deleteIdProduct = decreaseProductCard(idClick);
         dispatch(deleteIdProduct);
     }
-    const checkOutCart = async () => {
-        dispatch(orderProductApi(settings.getStorageJson(PRODUCT_CARD)))
-    }
     const handleQuatity = (decrement: boolean, id: number) => {
         if (decrement === false) {
             const productIndex = productCard.findIndex((product: ProductDetailModel) => product.id === id);
@@ -107,7 +104,7 @@ const Cart = (props: Props) => {
             <Table dataSource={productCard} columns={columns} />
             <Button onClick={() => {
                 if (userLogin) {
-                    checkOutCart()
+                    dispatch(orderProductApi(settings.getStorageJson(PRODUCT_CARD)))
                 } else {
                     history.push(`${PageConstant.login}`)
                 }

@@ -251,7 +251,7 @@ export const deleteOrder = createAsyncThunk<boolean, number, { rejectValue: stri
                     data.ordersHistory.filter((productId) => productId.id !== id)
                     settings.setStorageJson(USER_PROFILE, data)
                 }
-                thunkAPI.dispatch(getProfileApi());
+                await thunkAPI.dispatch(getProfileApi());
                 message.success("Delete success !");
 
             } else {
@@ -264,8 +264,8 @@ export const deleteOrder = createAsyncThunk<boolean, number, { rejectValue: stri
     }
 );
 
-export const orderProductApi = createAsyncThunk<boolean, ProductDetailModel[], { rejectValue: string }>('productReducer/orderProductApi',
-    async (product: ProductDetailModel[], thunkAPI) => {
+export const orderProductApi = createAsyncThunk<boolean, ProductDetailModel[]>('productReducer/orderProductApi',
+    async (product: ProductDetailModel[], thunkAPI): Promise<any> => {
         try {
             const orderDetail = product?.map((cart) => {
                 return {
@@ -278,11 +278,12 @@ export const orderProductApi = createAsyncThunk<boolean, ProductDetailModel[], {
                 email: settings.getStorageJson(USER_LOGIN).email
             })
             if (result.data.statusCode === 200) {
-                thunkAPI.dispatch(getProfileApi());
+                await thunkAPI.dispatch(getProfileApi());
                 settings.clearStorage(PRODUCT_CARD)
                 settings.clearStorage(TOTAL_QUATITY);
                 window.location.reload();
-                return message.success("Order success");
+                message.success("Order success");
+                return;
             } else {
                 message.error("Order faild")
                 return;
