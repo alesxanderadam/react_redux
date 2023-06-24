@@ -8,35 +8,48 @@ import { getProfileApi, updateProfileApi } from '../../redux/users-reducer/user-
 import { deleteOrder, getproductfavoriteApi, productsUserUnLikeApi } from '../../redux/products-reducer/product-reducer';
 import './profile.scss'
 import { ProductDetailModel, ProductsFavorite } from '../../models/product.model';
-import { UserProfile } from '../../models/user.model';
+import { UserModel, UserProfile } from '../../models/user.model';
 import { USER_PROFILE, settings } from '../../util/config';
-type Props = {}
+import { history } from '../../app';
+import { PageConstant } from '../../common/page.constant';
 
-const Profile = (props: Props) => {
+const Profile = () => {
     const dispatch: DispatchType = useDispatch();
     const { userProfile } = useSelector((state: RootState) => state.userReducer)
     const { favorite } = useSelector((state: RootState) => state.productReducer)
     const [arrProduct, setArrProduct] = useState<any[]>([]);
+    const [isHaveUserProfile, setIsHaveUserProfile] = useState<boolean>(true);
     const [arrayProductFavorite, setArrayProductFavorite] = useState<ProductsFavorite[]>([]);
     const [form] = Form.useForm();
 
     useEffect(() => {
+        const fetchUserProfile = async () => {
+            try {
+                await dispatch(getProfileApi());
+                setIsHaveUserProfile(false);
+            } catch (error) {
+                setIsHaveUserProfile(false);
+                console.log('Error fetching user profile:', error);
+            }
+        };
+
         if (!userProfile) {
-            dispatch(getProfileApi())
+            fetchUserProfile();
         } else {
             setArrProduct(userProfile.ordersHistory);
-            settings.setStorageJson(USER_PROFILE, userProfile)
+            settings.setStorageJson(USER_PROFILE, userProfile);
+            form.setFieldsValue(userProfile);
+        }
 
-            form.setFieldsValue(userProfile)
-        }
         if (favorite === null) {
-            dispatch(getproductfavoriteApi())
+            dispatch(getproductfavoriteApi());
         }
-    }, [userProfile, favorite])
+    }, [userProfile, favorite, dispatch, form]);
 
     useEffect(() => {
-        setArrayProductFavorite(favorite?.productsFavorite)
-    }, [favorite])
+        setArrayProductFavorite(favorite?.productsFavorite);
+    }, [favorite]);
+
     const validateMessages = {
         required: '${label} is required!',
         types: {
@@ -71,7 +84,7 @@ const Profile = (props: Props) => {
             key: 'name',
             title: 'Name',
             dataIndex: 'orderDetail',
-            render: (data: any) => {
+            render: (data: UserModel[]) => {
                 let displayString = "";
                 for (let i = 0; i < data.length; i++) {
                     displayString += data[i].name;
@@ -86,7 +99,7 @@ const Profile = (props: Props) => {
             key: 'quatatity',
             title: 'Quatatity',
             dataIndex: 'orderDetail',
-            render: (data: any) => {
+            render: (data: UserModel[]) => {
                 const count = data.length;
                 return <>
                     {count}
@@ -192,6 +205,16 @@ const Profile = (props: Props) => {
         const editProfile = updateProfileApi(values)
         dispatch(editProfile)
     }
+
+    useEffect(() => {
+        if (!isHaveUserProfile && !userProfile) {
+            history.push(PageConstant.login);
+        }
+    }, [isHaveUserProfile, userProfile]);
+
+    // if (isHaveUserProfile) {
+    //     return <div>Loading...</div>;
+    // }
 
 
     return (

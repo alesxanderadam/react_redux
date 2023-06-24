@@ -1,5 +1,5 @@
 export const PageConstant = {
-    home: '/home',
+    home: '/',
     login: '/login',
     register: '/register',
     cart: '/cart',

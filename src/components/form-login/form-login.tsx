@@ -30,7 +30,6 @@ const LoginForm = ({
         if (user) {
             form.setFieldsValue(user);
         }
-
     }, [user]);
 
     const checkUser = () => {

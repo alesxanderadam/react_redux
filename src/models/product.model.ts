@@ -6,7 +6,8 @@ export type ProductState = {
     productDetail: ProductDetailModel
     loading: boolean,
     error: any;
-    favorite: any
+    favorite: any,
+    searchResult: ProductModel[]
 }
 
 export interface ProductModel {

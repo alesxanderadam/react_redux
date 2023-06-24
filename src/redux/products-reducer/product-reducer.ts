@@ -12,7 +12,8 @@ const initialState: ProductState = {
     productDetail: null,
     loading: true,
     error: null,
-    favorite: null
+    favorite: null,
+    searchResult: [],
 }
 
 const productReducer = createSlice({
@@ -35,7 +36,14 @@ const productReducer = createSlice({
         setError: ((state: ProductState, action: PayloadAction<any>) => {
             state.loading = false;
             state.error = action.payload;
-        })
+        }),
+        getListProductSearchAction: (state, action) => {
+            state.searchResult = action.payload
+        },
+        getListProductSearchByPriceAction: (state, action) => {
+            const FindProductByPrice = state.searchResult.filter(arrProduct => arrProduct.price === action.payload)
+            state.searchResult = FindProductByPrice
+        },
     },
     extraReducers(builder) {
         //pending: Đang xử lý
@@ -138,7 +146,7 @@ const productReducer = createSlice({
         });
     }
 });
-export const { setArrProductAction, getproductfavoriteAction, setLoaddingAcion, setSuccess } = productReducer.actions
+export const { setArrProductAction, getproductfavoriteAction, setLoaddingAcion, setSuccess, getListProductSearchAction, getListProductSearchByPriceAction } = productReducer.actions
 export default productReducer.reducer
 /* ---------------- action api async action ----------  */
 export const getProductApi = () => {
@@ -181,7 +189,7 @@ export const productsUserLikeApi = (idProduct: number) => {
 }
 
 export const productsUserUnLikeApi = (idProduct: number) => {
-    return async (dispatch: DispatchType): Promise<void> => {
+    return async (): Promise<void> => {
         try {
             const result = await http.get(`/api/Users/unlike?productId=${idProduct}`)
             if (result.data.statusCode === 200) {
@@ -191,6 +199,20 @@ export const productsUserUnLikeApi = (idProduct: number) => {
         } catch (err) {
             message.error(`${err.content}`)
         }
+    }
+}
+
+export const getListProductSearchApi = (keyword: string) => {
+    return async (dispatch: DispatchType) => {
+        const result = await http.get(`/api/Product?keyword=${keyword}`)
+        const action = getListProductSearchAction(result.data.content)
+        dispatch(action)
+    }
+}
+
+export const getListProductSearchByPriceApi = (price: number) => {
+    return async (dispatch: DispatchType) => {
+        dispatch(getListProductSearchByPriceAction(price))
     }
 }
 
@@ -210,6 +232,7 @@ export const getProductDetailApi = createAsyncThunk('productReducer/getProductDe
 
 export const addProductToCardAction = createAsyncThunk('productReducer/addProductToCardAction', (product: any) => {
     try {
+        message.success(product.name + " product has been added")
         return product
     } catch (error) {
         return;

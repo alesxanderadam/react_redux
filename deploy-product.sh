@@ -11,4 +11,4 @@ cd build
 cp index.html 200.html
 
 # 5.Deploy
-npx surge . jira-project-app.surge.sh
+npx surge . altic-shaw.surge.sh

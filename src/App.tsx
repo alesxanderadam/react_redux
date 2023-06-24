@@ -11,6 +11,8 @@ import Login from './pages/login/login';
 import Register from './pages/register/register';
 import Profile from './pages/profile/profile';
 import Cart from './pages/cart/cart';
+import NotFound from './pages/not-found/not-found';
+import Search from './pages/search/search';
 export const history: any = createBrowserHistory()
 
 
@@ -18,14 +20,16 @@ export default function App() {
     return (
         <HistoryBrowser history={history}>
             <Routes>
-                <Route path='/' element={<HomeTemplate />}>
-                    <Route index path={`${PageConstant.home}`} element={<ResponsiveItem component={Home} componentMobile={Home} />}></Route>
-                    <Route path={`${PageConstant.detail}/:id`} element={<Detail />}></Route>
-                    <Route path={`${PageConstant.login}`} element={<Login />}></Route>
-                    <Route path={`${PageConstant.register}`} element={<Register />}></Route>
-                    <Route path={`${PageConstant.profile}`} element={<Profile />}></Route>
-                    <Route path={`${PageConstant.cart}`} element={<Cart />}></Route>
+                <Route element={<HomeTemplate />}>
+                    <Route index element={<ResponsiveItem component={Home} componentMobile={Home} />} />
+                    <Route path={`${PageConstant.detail}/:id`} element={<Detail />} />
+                    <Route path={`${PageConstant.login}`} element={<Login />} />
+                    <Route path={`${PageConstant.register}`} element={<Register />} />
+                    <Route path={`${PageConstant.profile}`} element={<Profile />} />
+                    <Route path={`${PageConstant.cart}`} element={<Cart />} />
+                    <Route path={`${PageConstant.search}`} element={<Search />} />
                 </Route>
+                <Route path="*" element={<NotFound />} />
             </Routes>
         </HistoryBrowser>
     )

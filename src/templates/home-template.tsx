@@ -4,13 +4,15 @@ import { PageConstant } from '../common/page.constant'
 import { DispatchType, RootState } from '../redux/config-store'
 import { useDispatch, useSelector } from 'react-redux'
 import { ACCESS_TOKEN, PRODUCT_CARD, settings, USER_LOGIN, USER_PROFILE } from '../util/config'
-import { DeleteOutlined, ExclamationCircleFilled, HeartOutlined, SearchOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons'
+import { DeleteOutlined, HeartOutlined, SearchOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons'
 import { Avatar, Button, Dropdown, Input, MenuProps, Modal, Popover, Space, Table } from 'antd'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useMemo } from 'react'
 import { TOTAL_QUATITY } from '../util/config'
 import { ProductDetailModel } from '../models/product.model'
-import { decreaseProductCard, increaseProductCard, orderProductApi } from '../redux/products-reducer/product-reducer'
+import { decreaseProductCard, getListProductSearchApi, increaseProductCard, orderProductApi } from '../redux/products-reducer/product-reducer'
 import './template.scss'
+import { history } from '../app'
+import utils from '../util/formater-number'
 
 type Props = {}
 
@@ -163,28 +165,12 @@ const HomeTemplate = (props: Props) => {
             key: "id",
             render: (data: ProductDetailModel) => {
                 return <Button className='action_delete_antd' onClick={() => {
-                    setVisible(false)
-                    showDeleteConfirm(data)
+                    const deleteIdProduct = decreaseProductCard(data.id);
+                    dispatch(deleteIdProduct);
                 }}><DeleteOutlined style={{ color: 'red' }} /></Button>
             },
         }
     ];
-
-    const { confirm } = Modal;
-    const showDeleteConfirm = (data: ProductDetailModel) => {
-        confirm({
-            title: "Delete product",
-            icon: <ExclamationCircleFilled />,
-            content: `Product name: ${data.name} will delete ? `,
-            okText: "Yes",
-            okType: "primary",
-            cancelText: "No",
-            onOk() {
-                const deleteIdProduct = decreaseProductCard(data.id);
-                dispatch(deleteIdProduct);
-            }
-        });
-    };
 
     return (
         <>
@@ -228,7 +214,10 @@ const HomeTemplate = (props: Props) => {
                                     <Input.Search
                                         className='me-3'
                                         placeholder="Enter shose name?"
-                                        onSearch={value => console.log(value)}
+                                        onSearch={value => {
+                                            dispatch(getListProductSearchApi(utils.$common.converVietNamese(value)))
+                                            history.push(PageConstant.search)
+                                        }}
                                         style={{ width: 150 }}
                                     />
                                 ) : (
@@ -237,6 +226,7 @@ const HomeTemplate = (props: Props) => {
                             </div>
                             <HeartOutlined className='me-3' />
                             <Popover
+                                placement="bottom"
                                 open={visible}
                                 onOpenChange={setVisible}
                                 content={
